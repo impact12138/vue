@@ -1,0 +1,199 @@
+{
+    "activities": [
+        {
+            "attribute": "17.0",
+            "description": "新用户下单立减17元(不与其它活动同享)",
+            "icon_color": "70bc46",
+            "icon_name": "首单",
+            "id": 808726642,
+            "is_exclusive_with_food_activity": true,
+            "name": "新用户立减(不与其他活动共享)",
+            "tips": "新用户下单立减17元(不与其它活动同享)",
+            "type": 103
+        },
+        {
+            "attribute": "{\"18\": {\"1\": 6.0, \"0\": 0}, \"35\": {\"1\": 12.0, \"0\": 0}, \"50\": {\"1\": 20.0, \"0\": 0}, \"70\": {\"1\": 25.0, \"0\": 0}}",
+            "description": "满18减6，满35减12，满50减20，满70减25",
+            "icon_color": "f07373",
+            "icon_name": "满减",
+            "id": 1063627874,
+            "is_exclusive_with_food_activity": true,
+            "name": "正新",
+            "tips": "满18减6，满35减12，满50减20，满70减25",
+            "type": 102
+        },
+        {
+            "description": "优惠套餐",
+            "icon_color": "f1884f",
+            "icon_name": "特价",
+            "id": 347240634,
+            "name": "优惠套餐",
+            "tips": "优惠套餐"
+        },
+        {
+            "description": "优惠套餐",
+            "icon_color": "f1884f",
+            "icon_name": "特价",
+            "id": 347240250,
+            "name": "优惠套餐",
+            "tips": "优惠套餐"
+        },
+        {
+            "description": "优惠套餐",
+            "icon_color": "f1884f",
+            "icon_name": "特价",
+            "id": 347239850,
+            "name": "优惠套餐",
+            "tips": "优惠套餐"
+        },
+        {
+            "description": "优惠套餐",
+            "icon_color": "f1884f",
+            "icon_name": "特价",
+            "id": 347239578,
+            "name": "优惠套餐",
+            "tips": "优惠套餐"
+        },
+        {
+            "description": "优惠套餐",
+            "icon_color": "f1884f",
+            "icon_name": "特价",
+            "id": 347239018,
+            "name": "优惠套餐",
+            "tips": "优惠套餐"
+        },
+        {
+            "description": "优惠套餐",
+            "icon_color": "f1884f",
+            "icon_name": "特价",
+            "id": 347238498,
+            "name": "优惠套餐",
+            "tips": "优惠套餐"
+        },
+        {
+            "description": "鱿鱼须",
+            "icon_color": "f1884f",
+            "icon_name": "特价",
+            "id": 322765098,
+            "name": "鱿鱼须",
+            "tips": "鱿鱼须"
+        }
+    ],
+    "cover_img":"https://fuss10.elemecdn.com/2/7f/093baad416a6fc7446a742ff9c2bejpeg.jpeg?imageMogr/format/webp/thumbnail/!200x200r/gravity/Center/crop/200x200/",
+    "imageURL":"https://fuss10.elemecdn.com/9/82/83c1281547324a0c7ef294ee47bffpng.png?imageMogr/format/webp/",
+    "imgpath":"https://fuss10.elemecdn.com/3/58/a93fd92d242a7352e9fdb64b7d2eapng.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/",
+    "address": "广东省深圳市龙华区民治大道461号",
+    "albums": [
+        {
+            "count": 1,
+            "cover_image_hash": "27f093baad416a6fc7446a742ff9c2bejpeg",
+            "name": "门面",
+            "photos": [
+                {
+                    "description": "",
+                    "id": 19191721,
+                    "image_hash": "27f093baad416a6fc7446a742ff9c2bejpeg",
+                    "type": "FRONT"
+                }
+            ]
+        }
+    ],
+    "authentic_id": 1372846579263503,
+    "delivery_mode": {
+        "border": "",
+        "color": "2395FF",
+        "gradient": {
+            "rgb_from": "00AAFF",
+            "rgb_to": "0085FF"
+        },
+        "icon_hash": "b9b45d2f6ff0dbeef3a78ef0e4e90abapng",
+        "id": 1,
+        "is_solid": true,
+        "text": "蜂鸟专送",
+        "text_color": "FFFFFF"
+    },
+    "description": "",
+    "distance": 0,
+    "favored": false,
+    "flavors": [
+        {
+            "id": 234,
+            "name": "炸鸡炸串"
+        },
+        {
+            "id": 212,
+            "name": "汉堡"
+        }
+    ],
+    "float_delivery_fee": 5,
+    "float_minimum_order_amount": 20,
+    "has_story": false,
+    "id": 157158603,
+    "image_path": "358a93fd92d242a7352e9fdb64b7d2eapng",
+    "is_new": false,
+    "is_premium": true,
+    "is_stock_empty": 0,
+    "is_valid": 1,
+    "latitude": 22.622349,
+    "longitude": 114.038961,
+    "max_applied_quantity_per_order": -1,
+    "name": "正新鸡排(民治店)",
+    "next_business_time": "",
+    "only_use_poi": false,
+    "opening_hours": [
+        "10:00/23:50"
+    ],
+    "order_lead_time": 20,
+    "phone": "18975491055",
+    "piecewise_agent_fee": {
+        "description": "配送费¥5",
+        "extra_fee": 0,
+        "is_extra": false,
+        "rules": [
+            {
+                "fee": 5,
+                "price": 20
+            }
+        ],
+        "tips": "配送费¥5"
+    },
+    "platform": 0,
+    "posters": [],
+    "promotion_info": "未填写商家公告\n\n亲！欢迎您光临正新鸡排民治直营",
+    "qualification": {
+        "link": "https://h5.ele.me/shop/certification/#/?restaurant_id=1372846579263503"
+    },
+    "rating": 5,
+    "rating_count": 866,
+    "recent_order_num": 1035,
+    "recommend": {
+        "color": "#e8470b",
+        "image_hash": "ac124c767ffa7fd296d3e2d6f01798c6png",
+        "is_ad": false,
+        "reason": "口碑人气好店"
+    },
+    "recommend_reasons": [
+        {
+            "name": "回头客多"
+        },
+        {
+            "name": "配送飞快"
+        }
+    ],
+    "regular_customer_count": 0,
+    "scheme": "eleme://catering?restaurant_id=157158603",
+    "shop_sign": {
+        "brand_story": "正新鸡排，美味与实惠，为您共享给您的生活带去方便与快乐。。",
+        "image_hash": "98283c1281547324a0c7ef294ee47bffpng"
+    },
+    "status": 1,
+    "support_tags": [],
+    "supports": [],
+    "type": 0,
+    "weight": {
+        "basic": 20000,
+        "maximum": 20000,
+        "unit": 20000,
+        "unit_fee": 20000
+    }
+}

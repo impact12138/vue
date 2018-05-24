@@ -1,0 +1,25 @@
+<template>
+  <div id="hello">
+    <h1>{{name}}</h1>
+    <p>{{ msg }}</p>
+  </div>
+</template>
+
+<snew Vue({
+  el: "#hello",
+  data:{
+    name:"",
+    msg:"",
+    pic1:"",
+    pic2:""
+  }
+})
+</script>
+<script src="vue.js"></script>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+h1{
+  font-size:.546667rem;
+  margin:0;
+}
+</style>
