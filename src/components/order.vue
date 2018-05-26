@@ -284,8 +284,8 @@ button{
     border-radius:15px;
     text-overflow:ellipsis;
     width:auto;
-    padding:0 10px !important;
-    margin:0 0 0 5% !important;
+    padding:0 5px 0 10px!important;
+    margin:0 0 0 3px !important;
     height:23px;
     line-height:23px;
 }
@@ -295,8 +295,7 @@ button{
     border-radius:5px;
 }
 .tipBox .el-tabs__nav-scroll{
-    width:90%;
-    display:
+    width:99%;
 }
 .tinyUl{margin:10px 10px 10px 15px;}
 .tinyUl p{margin:0;}
