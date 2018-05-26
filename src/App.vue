@@ -85,6 +85,10 @@ body{
   width:100%;
   height:70vw;
 }
+.stuff .el-dialog{
+  margin:30vh auto !important;
+  width:80%;
+}
 .bottomone .el-dialog__header{padding:0;}
 .bottomone .el-dialog__body{padding:10px 20px 0 20px;}
 </style>

@@ -20,7 +20,7 @@
                             <p class="spoke">{{item.description}}</p>
                             <p class="sell">月售{{item.month_sales}}份 好评率{{item.satisfy_rate}}%</p>
                             <span>￥<span style="font-weight:bold;font-size:18px;">{{item.specfoods[0].price}}</span> 起</span>
-                            <el-button type="text" @click="openDialog(item.virtual_food_id)">
+                            <el-button type="text" @click="openDialog(item.category_id, item.virtual_food_id)">
                                 <button :id="item.virtual_food_id">选规格</button>
                             </el-button>
                         </div>
@@ -29,30 +29,63 @@
             </ul>
         </div>
         <totalPrice :shopping="shop"></totalPrice>
-        <el-dialog :visible.sync="buttonVisible">
-            <ul>
-                <li v-for="bar in buttonForm">
-                    <h2>{{bar.name}}</h2>
-                </li>
-            </ul>
-        </el-dialog>
+        <div class="stuff">
+            <el-dialog :visible.sync="buttonVisible">
+                <div class="bodyDiv">
+                    <h2>{{currentFoodObj.name}}</h2>
+                    <div class="tipBox">
+                        <p>规格</p>
+                        <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
+                            <ul>
+                                <li v-for="jew in currentFoodObj.specfoods">
+                                    <el-tab-pane v-for="tip in jew.specs" :label="tip.value">
+                                        <ul v-for="sub in currentFoodObj.attrs" class="tinyUl">
+                                            <p>{{sub.name}}</p>
+                                            <li v-for="taste in sub.values">{{taste}}</li>
+                                        </ul>
+                                        <div class="bigD">
+                                            <div class="littleD1">
+                                                <h2>￥{{jew.price}}</h2>
+                                            </div>
+                                            <div class="littleD2">
+                                                <h2>选好了</h2>
+                                            </div>
+                                        </div>
+                                    </el-tab-pane>
+                                </li>
+                            </ul>
+                        </el-tabs>
+                    </div>
+                </div>
+            </el-dialog>
+        </div>  
+        <div class="shoppingCart">
+            <div class="shoppingDescription">
+                <p>{{shop.activities[1].description}}</p>
+            </div>
+            <div class="workOutArea">
+                <div class="workOutprice">
+                    <h2>￥{{price}}</h2>
+                    <p>配送费￥{{shop.float_delivery_fee}}</p>
+                </div>
+                <div class="priceToSend">
+                    <h2>￥{{shop.float_minimum_order_amount}}起送</h2>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
 import axios from 'axios';
-import totalPrice from './trd_tab/totalPrice';
 export default{
     name:"order",
-    components:{
-        totalPrice
-    },
     data(){
         return{
-            tabPosition: 'left',
             order:null,
             shop:null,
             buttonVisible:false,
-            buttonForm:{},
+            currentFoodObj: {},
+            price:""
         }
     },
     mounted(){
@@ -72,18 +105,42 @@ export default{
         })
     },
     methods:{
-        openDialog:function(id){
+        openDialog:function(category_id, food_id){
             this.buttonVisible=true;
-            console.log(id);
-            for(var i=0;i<this.order.length;i++){
-                var sub=this.order[i].foods;
-                // var such=[];
-                for(var j=0;j<sub.length;j++){
-                    if(id=sub[j].virtual_food_id){
-                        this.buttonForm=sub[j];
+            // console.log(category_id);
+            // console.log(food_id);
+            console.log(this.order);
+
+            // 缓存当前菜品对应的分类数据
+            var category = null;
+            for(var i=0; i<this.order.length; i++){
+                if(this.order[i].id == category_id){
+                    category = this.order[i];
+                    
+                    // 取得分类数据后，再循环遍历取得菜品对象
+                    for(var f=0, len=category.foods.length; f<len; f++){
+                        // 缓存当前菜品对象
+                        var food = null;
+                        if(category.foods[f].virtual_food_id == food_id){
+                            food = category.foods[f];
+                            this.currentFoodObj = food;
+                            console.log(this.currentFoodObj);
+                        }
                     }
                 }
             }
+            // for(var i=0;i<this.order.length;i++){
+            //     var sub=this.order[i].foods;
+            //     // var such=[];
+            //     for(var j=0;j<sub.length;j++){
+            //         if(id=sub[j].virtual_food_id){
+            //             this.buttonForm=sub[j];
+            //         }
+            //     }
+            // }
+        },
+        handleClick(tab, event) {
+            console.log(tab, event);
         }
     }
 }
@@ -179,5 +236,152 @@ button{
     border:1px solid #3199e8;
     padding:3px 5px;
     float:right;
+}
+.stuff .el-dialog__header{
+    padding:0;
+}
+.stuff .el-dialog__body{
+    padding:0;
+    border-radius:5px;
+}
+.stuff .el-dialog{
+    border-radius:5px;
+}
+.stuff h2{
+    text-align:center;
+    color:#333;
+    margin:0 auto !important;
+    font-size:19px;
+    width:70%;
+    font-weight:normal;
+}
+.tipBox{border-radius:5px;}
+.tipBox .el-tabs__active-bar{display:none;}
+.tipBox .el-tabs__nav{
+    float:none;
+}
+.tipBox .el-tabs--border-card{
+    border:none;
+    box-shadow:none;
+    text-align:left;
+    border-radius:5px;
+}
+.tipBox li{list-style:none;}
+.tipBox p{
+    text-align:left;
+    margin:10px 10px 10px 15px;
+}
+.tipBox .el-tabs__header{
+    background:#fff;
+    border:none;
+}
+.tipBox .el-tabs__item{
+    border:1px solid #ccc !important;
+    border-radius:15px;
+    text-overflow:ellipsis;
+    overflow:auto;
+    width:auto;
+    padding:0 10px !important;
+    margin:0 0 0 5% !important;
+    height:23px;
+    line-height:23px;
+}
+.tipBox .el-tabs__content{
+    height:140px;
+    padding:0;
+    border-radius:5px;
+}
+.tinyUl{margin:10px 10px 10px 15px;}
+.tinyUl p{margin:0;}
+.tinyUl li{
+    display:inline-block;
+    padding:1px 10px;
+    border:1px solid #ccc;
+    margin:10px 8px 10px 0;
+    color:#909399;
+    border-radius:15px;
+}
+.tinyUl li:hover{
+    color:#409EFF;
+    border-color:#409EFF;
+}
+.bodyDiv h2{
+    padding:15px 0;
+    margin:0;
+}
+.bigD{
+    width:100%;
+    background:#f9f9f9;
+    height:60px;
+}
+.littleD1{
+    display:inline-block;
+    margin:0 5%;
+}
+.littleD1 h2{
+    font-weight:bold;
+    color:#ff6000;
+}
+.littleD2{
+    display:inline-block;
+    float:right;
+    margin:0 5%;
+}
+.littleD2 h2{
+    color:#fff;
+    padding:6px 6px 6px 10px;
+    background:#3199e8;
+    margin:15px 0 !important;
+    font-size:16px;
+    width:auto;
+    border-radius:3px;
+}
+.shoppingCart{
+    width:100%;
+    position:fixed;
+    bottom:0;
+    height:80px;
+}
+.shoppingDescription{
+    width:100%;
+    height:25px;
+    line-height:25px;
+    font-size:12px;
+    background:#fffad6;
+}
+.workOutArea{
+    width:100%;
+    background:rgba(61,61,63,.9);
+    height:75px;
+    text-align:right;
+}
+.workOutprice h2{
+    margin:0;
+    color:#fff;
+    line-height:30px;
+}
+.workOutprice{
+    text-align:left;
+    width:50%;
+    margin:0 auto;
+    display:inline-block;
+    height:75px;
+}
+.workOutprice p{
+    line-height:15px;
+    font-size:12px;
+    color:#999;
+}
+.priceToSend{
+    text-align:center;
+    width:30%;
+    float:right;
+    height:75px;
+}
+.priceToSend h2{
+    margin:0;
+    color:#fff;
+    text-align:center;
+    padding:12% 0;
 }
 </style>

@@ -41,7 +41,6 @@ export default{
         axios.get('http://localhost:8080/static/scores.json')
         .then(response => {
         this.scores = response.data;
-        console.log(this.scores);
         })
         .catch(function(error){
         console.log(error);

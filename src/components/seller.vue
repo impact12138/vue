@@ -55,6 +55,10 @@ export default {
 }
 </script>
 <style>
+.trd_id .el-tab-pane{
+  height:680px;
+  overflow:scroll;
+}
 h2{
   font-size:18px;
   margin:15px 0;
