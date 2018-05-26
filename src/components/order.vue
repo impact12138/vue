@@ -41,13 +41,13 @@
                                     <el-tab-pane v-for="tip in jew.specs" :label="tip.value">
                                         <ul v-for="sub in currentFoodObj.attrs" class="tinyUl">
                                             <p>{{sub.name}}</p>
-                                            <li v-for="taste in sub.values">{{taste}}</li>
+                                            <li v-for="(taste,index) in sub.values" v-model="activeName2" :name="index">{{taste}}</li>
                                         </ul>
                                         <div class="bigD">
                                             <div class="littleD1">
                                                 <h2>￥{{jew.price}}</h2>
                                             </div>
-                                            <div class="littleD2">
+                                            <div class="littleD2" @click="addMoney">
                                                 <h2>选好了</h2>
                                             </div>
                                         </div>
@@ -85,7 +85,8 @@ export default{
             shop:null,
             buttonVisible:false,
             currentFoodObj: {},
-            price:""
+            activeName2:"1",
+            price:"0"
         }
     },
     mounted(){
@@ -141,6 +142,9 @@ export default{
         },
         handleClick(tab, event) {
             console.log(tab, event);
+        },
+        addMoney(){
+            this.price=Number(this.price)+Number(this.currentFoodObj.specfoods[0].price);
         }
     }
 }
@@ -279,7 +283,6 @@ button{
     border:1px solid #ccc !important;
     border-radius:15px;
     text-overflow:ellipsis;
-    overflow:auto;
     width:auto;
     padding:0 10px !important;
     margin:0 0 0 5% !important;
@@ -290,6 +293,10 @@ button{
     height:140px;
     padding:0;
     border-radius:5px;
+}
+.tipBox .el-tabs__nav-scroll{
+    width:90%;
+    display:
 }
 .tinyUl{margin:10px 10px 10px 15px;}
 .tinyUl p{margin:0;}
