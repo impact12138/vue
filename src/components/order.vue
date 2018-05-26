@@ -41,7 +41,7 @@
                                     <el-tab-pane v-for="tip in jew.specs" :label="tip.value">
                                         <ul v-for="sub in currentFoodObj.attrs" class="tinyUl">
                                             <p>{{sub.name}}</p>
-                                            <li v-for="(taste,index) in sub.values" v-model="activeName2" :name="index">{{taste}}</li>
+                                            <li v-for="(taste,index) in sub.values" :name="index">{{taste}}</li>
                                         </ul>
                                         <div class="bigD">
                                             <div class="littleD1">
@@ -77,6 +77,7 @@
 </template>
 <script>
 import axios from 'axios';
+import Vue from 'Vue';
 export default{
     name:"order",
     data(){
@@ -85,7 +86,7 @@ export default{
             shop:null,
             buttonVisible:false,
             currentFoodObj: {},
-            activeName2:"1",
+            activeName:"",
             price:"0"
         }
     },
@@ -125,7 +126,6 @@ export default{
                         if(category.foods[f].virtual_food_id == food_id){
                             food = category.foods[f];
                             this.currentFoodObj = food;
-                            console.log(this.currentFoodObj);
                         }
                     }
                 }
@@ -145,6 +145,12 @@ export default{
         },
         addMoney(){
             this.price=Number(this.price)+Number(this.currentFoodObj.specfoods[0].price);
+            // var leo=document.getElementById("leo");操作DOM失败X2
+            // this.leo = "false";无法更改因为显示函数在插件里已定死    v-if失败
+            this.buttonVisible=false;//
+        },
+        sold(){
+            console.log("1");
         }
     }
 }
@@ -154,6 +160,15 @@ export default{
 //         left[i].className = "isActive";
 //     }
 // }
+//点击“选好了”关闭弹窗事件，方法一:
+//操作虚拟DOM失败
+// Vue.nextTick(function(){
+//     var little = document.getElementsByClassName("littleD2");
+//     little.onclick = function(){
+//         var leo = document.getElementsByClassName("stuff").getElementsByClassName("el-dialog__wrapper");
+//         leo.display="none";
+//     }
+// })
 </script>
 <style type="text/css">
 .left_tb{
@@ -335,7 +350,7 @@ button{
 }
 .littleD2 h2{
     color:#fff;
-    padding:6px 6px 6px 10px;
+    padding:6px;
     background:#3199e8;
     margin:15px 0 !important;
     font-size:16px;
