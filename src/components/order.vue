@@ -1,7 +1,7 @@
 <template>
     <div>
         <ul class="left_tb">
-            <li v-for="(item,index) in order"><a :href="'#'+ item.name" style="text-decoration:none;color:#666">{{item.name}}</a></li>
+            <li v-for="(item,index) in order" :class="['lione']" @click="tabMenu(index)"><a :href="'#'+ item.name" style="text-decoration:none;color:#666">{{item.name}}</a></li>
         </ul><!--此处字符串拼接-->
         <div>
             <ul class="right_thing">
@@ -13,20 +13,44 @@
                     <!--div v-for="pic in menuPic[index]">
                         <img :src="pic">
                     </div-->
+                    
                     <div v-for="(item,index) in bar.foods" class="ulist">
-                        <img :src="item.image_path">
-                        <div class="llist">
-                            <h2>{{item.name}}</h2>
-                            <p class="spoke">{{item.description}}</p>
-                            <p class="sell">月售{{item.month_sales}}份 好评率{{item.satisfy_rate}}%</p>
-                            <span>￥<span style="font-weight:bold;font-size:18px;">{{item.specfoods[0].price}}</span> 起</span>
-                            <el-button type="text" @click="openDialog(item.category_id, item.virtual_food_id)">
-                                <button :id="item.virtual_food_id">选规格</button>
-                            </el-button>
-                        </div>
+                        <el-button type="text" @click="openBigone(item.category_id, item.virtual_food_id)">
+                            <img :src="item.image_path">
+                        </el-button>
+                            <div class="llist">
+                                <el-button type="text" @click="openBigone(item.category_id, item.virtual_food_id)">
+                                <h2>{{item.name}}</h2>
+                                <p class="spoke">{{item.description}}</p>
+                                <p class="sell">月售{{item.month_sales}}份 好评率{{item.satisfy_rate}}%</p>
+                                <span>￥<span style="font-weight:bold;font-size:18px;">{{item.specfoods[0].price}}</span> 起</span>
+                                </el-button>
+                                <div style="display:inline-block;float:right;text-align:right;" class="listDiv">
+                                    <div class="delete" v-if="serious">
+                                        <i class="el-icon-remove-outline" style="color:#2395ff" @click="cut"></i><span>{{num}}</span>
+                                    </div>
+                                    <el-button type="text" @click="openDialog(item.category_id, item.virtual_food_id)">
+                                        <button :id="item.virtual_food_id">选规格</button>
+                                    </el-button>
+                                </div>
+                            </div>
                     </div>
                 </li>
             </ul>
+        </div>
+        <div class="bigStuff">
+            <el-dialog :visible.sync="imgVisible":show-close="false">
+                <img :src="currentImgObj.image_path">
+                <div class="describe">{{currentImgObj.description}}</div>
+                <div class="bigStuffdiv">
+                    <h2>{{currentImgObj.name}}</h2>
+                    <p>月售{{currentImgObj.month_sales}}份 好评率{{currentImgObj.satisfy_rate}}%</p>
+                    <span class="bgStfSpan">￥<span style="font-weight:bold;font-size:18px;">{{specPrice}}</span> 起</span>
+                    <el-button type="text" @click="openDialog(currentImgObj.category_id, currentImgObj.virtual_food_id)">
+                        <button :id="currentImgObj.virtual_food_id">选规格</button>
+                    </el-button>
+                </div>
+            </el-dialog>
         </div>
         <totalPrice :shopping="shop"></totalPrice>
         <div class="stuff">
@@ -47,7 +71,7 @@
                                             <div class="littleD1">
                                                 <h2>￥{{jew.price}}</h2>
                                             </div>
-                                            <div class="littleD2" @click="addMoney">
+                                            <div class="littleD2" @click="addMoney(currentFoodObj.category_id, currentFoodObj.virtual_food_id)">
                                                 <h2>选好了</h2>
                                             </div>
                                         </div>
@@ -64,12 +88,17 @@
                 <p>{{shop.activities[1].description}}</p>
             </div>
             <div class="workOutArea">
+                <div class="car">
+                    <el-badge :value="cart.count">
+                        <el-button size="small"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgNTggNTgiPjxkZWZzPjxmaWx0ZXIgaWQ9ImEiIHdpZHRoPSIyMDAlIiBoZWlnaHQ9IjIwMCUiIHg9Ii01MCUiIHk9Ii01MCUiIGZpbHRlclVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCI+PGZlT2Zmc2V0IGluPSJTb3VyY2VBbHBoYSIgcmVzdWx0PSJzaGFkb3dPZmZzZXRPdXRlcjEiLz48ZmVHYXVzc2lhbkJsdXIgaW49InNoYWRvd09mZnNldE91dGVyMSIgcmVzdWx0PSJzaGFkb3dCbHVyT3V0ZXIxIiBzdGREZXZpYXRpb249IjEuNSIvPjxmZUNvbG9yTWF0cml4IGluPSJzaGFkb3dCbHVyT3V0ZXIxIiByZXN1bHQ9InNoYWRvd01hdHJpeE91dGVyMSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjA4IDAiLz48ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49InNoYWRvd01hdHJpeE91dGVyMSIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT48L2ZpbHRlcj48cGF0aCBpZD0iYiIgZD0iTTcuNjE0IDQuMDUxYy0xLjA2Ni4wODYtMS40NTItLjM5OC0xLjc1Mi0xLjU4NEM1LjU2MiAxLjI4LjMzIDUuODguMzMgNS44OGwzLjcxIDE5LjQ3NmMwIC4xNDgtMS41NiA3LjUxNS0xLjU2IDcuNTE1LS40ODkgMi4xOS4yOTIgNC4yNyAzLjU2IDQuMzIgMCAwIDM2LjkxNy4wMTcgMzYuOTIuMDQ3IDEuOTc5LS4wMTIgMi45ODEtLjk5NSAzLjAxMy0zLjAzOS4wMy0yLjA0My0xLjA0NS0yLjk3OC0yLjk4Ny0yLjk5M0w4LjgzIDMxLjE5MnMuODYtMy44NjUgMS4wNzctMy44NjVjMCAwLTUuNzg4LjEyMiAzMi4wNjUtMS45NTYuNjA2LS4wMzMgMi4wMTgtLjc2NCAyLjI5OC0xLjg0OCAxLjExMy00LjMxNyA0LjAwOC0xMy4yNiA0LjQ1OC0xNS42NC45MzItNC45MjUgMi4wNjEtOC41NTgtNC4yOC03LjQwNSAwIDAtMzUuNzY4IDMuNDg3LTM2LjgzMyAzLjU3M3oiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBmaWx0ZXI9InVybCgjYSkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUuMDM4IDcuODA4KSI+PG1hc2sgaWQ9ImMiIGZpbGw9IiNmZmYiPjx1c2UgeGxpbms6aHJlZj0iI2IiLz48L21hc2s+PHVzZSBmaWxsPSIjNUY1RjYzIiB4bGluazpocmVmPSIjYiIvPjxwYXRoIGZpbGw9IiNFQkVFRjMiIGQ9Ik01My45NjIgNy43NzRsLTUuNzAxIDE5LjMwNS00MC43OCAxLjU3NHoiIG1hc2s9InVybCgjYykiIG9wYWNpdHk9Ii4wNSIvPjwvZz48cGF0aCBzdHJva2U9IiM1RjVGNjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI2IiBkPSJNOS4zNzQgMTguNzIyUzcuODY4IDExLjI4MyA3LjMyMyA4LjcxQzYuNzc4IDYuMTM2IDUuODYgNS4zMyAzLjk3OCA0LjUyIDIuMDk2IDMuNzEzLjM2NyAyLjI4Ni4zNjcgMi4yODYiLz48Y2lyY2xlIGN4PSI0NiIgY3k9IjUxIiB
+                        yPSI0IiBmaWxsPSIjNUY1RjYzIi8+PGNpcmNsZSBjeD0iMTIiIGN5PSI1MSIgcj0iNCIgZmlsbD0iIzVGNUY2MyIvPjwvZz48L3N2Zz4="></el-button>
+                    </el-badge>
+                </div>
                 <div class="workOutprice">
-                    <h2>￥{{price}}</h2>
+                    <h2>￥{{cart.price}}</h2>
                     <p>配送费￥{{shop.float_delivery_fee}}</p>
                 </div>
-                <div class="priceToSend">
-                    <h2>￥{{shop.float_minimum_order_amount}}起送</h2>
+                <div class="priceToSend" v-html="msg">
                 </div>
             </div>
         </div>
@@ -85,9 +114,21 @@ export default{
             order:null,
             shop:null,
             buttonVisible:false,
+            imgVisible:false,
             currentFoodObj: {},
+            currentImgObj:{},
             activeName:"",
-            price:"0"
+            num:"",
+            serious:false,
+            msg:"",
+            menu:[],
+            specPrice:"",
+            isActive:false,
+            cart: {
+                count: "",
+                price: 0,
+                menu: {}//下一步需要判断并添加数据到menu对象里，并在页面中渲染
+            }
         }
     },
     mounted(){
@@ -101,18 +142,44 @@ export default{
         axios.get('http://localhost:8080/static/shop.json')
         .then(response=> {
             this.shop = response.data;
+            this.msg='￥'+this.shop.float_minimum_order_amount+'起送'
         })
         .catch(function(error){
             console.log(error);
         })
     },
     methods:{
+        openBigone:function(category_id, food_id){
+            this.imgVisible=true;
+            
+            var category = null;
+            for(var i=0; i<this.order.length; i++){
+                if(this.order[i].id == category_id){
+                    category = this.order[i];
+                    
+                    // 取得分类数据后，再循环遍历取得菜品对象
+                    for(var f=0, len=category.foods.length; f<len; f++){
+                        // 缓存当前菜品对象
+                        var feed = null;
+                        if(category.foods[f].virtual_food_id == food_id){
+                            feed = category.foods[f];
+                            this.currentImgObj = feed;
+                            this.specPrice=this.currentImgObj.specfoods[0].price;
+                        }
+                    }
+                }
+            }
+        },
+        tabMenu(index){
+            // this.isActive=true;
+            console.log(index);
+        },
         openDialog:function(category_id, food_id){
             this.buttonVisible=true;
             // console.log(category_id);
             // console.log(food_id);
             console.log(this.order);
-
+            this.imgVisible=false;
             // 缓存当前菜品对应的分类数据
             var category = null;
             for(var i=0; i<this.order.length; i++){
@@ -143,14 +210,46 @@ export default{
         handleClick(tab, event) {
             console.log(tab, event);
         },
-        addMoney(){
-            this.price=Number(this.price)+Number(this.currentFoodObj.specfoods[0].price);
+        addMoney:function(category_id, food_id){
+            this.cart.price=Number(this.cart.price)+Number(this.currentFoodObj.specfoods[0].price);
             // var leo=document.getElementById("leo");操作DOM失败X2
             // this.leo = "false";无法更改因为显示函数在插件里已定死    v-if失败
-            this.buttonVisible=false;//
+            this.buttonVisible=false;//***
+            this.cart.count++;
+            this.serious=true;
+            if(0<this.cart.price<this.shop.float_minimum_order_amount){
+                var least=this.shop.float_minimum_order_amount-this.cart.price;
+                this.msg="还差￥"+least+"起送"
+            }
+            if(this.cart.price>=this.shop.float_minimum_order_amount){
+                this.msg="<div style=background:#4cd964;height:100%;>去结算</div>"
+            }
+            console.log(category_id,food_id);
+            // this.cart.menu[category_id]={
+            //     id:food_id,
+            //     prize:  ,
+            //     count:0
+            // }
+            // this.cart.menu
+            // this.cart.count ++;
+            // this.cart.menu
+            
+            // for(var i=0; i<this.cart.menu.length; i++){
+            //     if(menuId == id){
+            //         this.cart.menu[id] = {
+            //             count: count+=,
+            //             prize: 
+            //         }
+            //     }
+            // }
+
         },
-        sold(){
-            console.log("1");
+        cut(){
+            this.serious=false;
+            this.cart.count--;
+            if(this.cart.count<=0){
+                this.cart.count="";
+            }
         }
     }
 }
@@ -178,19 +277,13 @@ export default{
     height:700px;
     float:left;
 }
-.left_tb .isActive{
-    background:#000;
-}
-.left_tb li{
+.lione{
     display:block;
     list-style:none;
     padding:15px 7%;
     font-size:14px;
 }
-.left_tb li:hover{
-    background:#fff;
-}
-.left_tb li:active{
+.left_tb .active{
     background:#fff;
 }
 .right_thing{
@@ -215,9 +308,13 @@ export default{
 .ulist{
     padding:15px 0 15px 0;
 }
-.ulist img{
-    width:28%;
+.ulist .el-button{
+    width:29%;
+    padding:0;
     float:left;
+}
+.ulist .el-button img{
+    width:100%;
     border-radius:2px;
 }
 .llist{
@@ -225,8 +322,19 @@ export default{
     width:67%;
     margin-left:10px;
 }
-.llist .el-button{padding:0;}
-.llist h2{
+.llist .el-button{
+    width:100%;
+    text-align:left;
+    border:none;
+}
+.listDiv{margin-top:-20px;}
+.listDiv .el-button{
+    padding:0;
+    width:auto;   
+    float:none;
+    text-align:right;
+}
+.llist .el-button h2{
     display:inline-block;
     margin:0;
     font-size:16.5px;
@@ -235,17 +343,24 @@ export default{
     white-space:nowrap;
     overflow:hidden;
     font-size:10px;
-    margin:3px 0;
+    margin:8px 0 !important;
+    color:#999;
     text-overflow:ellipsis;
 }
 .sell{
     font-size:12px;
     color:#333;
-    margin:5px 0;
+    margin:8px 0;
 }
-.llist span{
+.llist .el-button span{
     color:#f60;
     font-size:14px;
+    line-height:16px
+}
+.llist .el-button h2{
+    width:185px;
+    overflow:hidden;
+    text-overflow:ellipsis;  
 }
 button{
     color:#fff;
@@ -254,7 +369,57 @@ button{
     background:#3199e8;
     border:1px solid #3199e8;
     padding:3px 5px;
+}
+.bigStuff .el-dialog__header{
+    padding:0;
+}
+.bigStuff .el-dialog__body{
+    width:100%;
+    padding:0;
+    overflow:scroll;
+}
+.bigStuff .el-dialog__body img{
+    width:100%;
+}
+.bigStuff .el-dialog{
+    margin:18vh 8% 0 8% !important;
+    width:84%;
+    border-radius:7px;
+    height:460px;
+    overflow:hidden;
+    position:absolute;
+}
+.bigStuffdiv{
+    padding:10px;
+    text-align:left;
+}
+.bigStuffdiv h2{
+    margin-bottom:0;
+    font-size:15px;
+}
+.bigStuffdiv p{
+    font-size:13px;
+}
+.bgStfSpan{
+    color:#f60;
+    float:left;
+    display:inline-block;
+    position:absolute;
+    bottom:10px;
+    left:10px;  
+}
+.bigStuffdiv .el-button{
     float:right;
+    padding:0;
+    position:absolute;
+    bottom:10px;
+    right:10px;
+}
+.describe{
+    font-size:12px;
+    text-align:left;
+    margin:-55px 6px 0 6px;
+    color:#ddd;
 }
 .stuff .el-dialog__header{
     padding:0;
@@ -398,11 +563,47 @@ button{
     width:30%;
     float:right;
     height:75px;
-}
-.priceToSend h2{
-    margin:0;
     color:#fff;
-    text-align:center;
-    padding:12% 0;
+    line-height:55px;
+    font-weight:bold;
+    font-size:18px;
+}
+.car{
+    display:inline-block;
+    position:fixed;
+    bottom:10px;
+    left:10px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:rgba(61,61,63,.9);
+}
+.car span{
+    display:block;
+    width:25px;
+    height:25px;
+    position:relative;
+    right:5px;
+}
+.car img{
+    width:25px;
+    height:25px;
+}
+.car .el-button{
+    border:none;
+    border-radius:50%;
+    height:45px;
+    width:45px;
+    position:relative;
+    right:7px;
+    top:7px;
+    background:#363636;
+}
+.car .el-badge__content.is-fixed{
+    right:16px;
+    top:10px;
+}
+.delete{
+    display:inline-block;
 }
 </style>

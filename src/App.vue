@@ -53,6 +53,26 @@ body{
     .bottomone .el-dialog__body{padding:5px 10px 0 10px !important;}
     .bottomTip{height:300px !important;}
     .bottomTip ul{height:150px !important;}
+    .bigStuff .el-dialog{
+      height:410px !important;
+      margin-top:10vh !important;
+    }
+    .bigStuffdiv h2{
+      margin:10px 0;
+      font-size:14px;
+      width:90%;
+    }
+    .bgStfSpan{
+      margin:10px 0 !important;
+      position:absolute;
+      bottom:2px !important;
+      left:2px !important;
+    }
+    .llist .el-button h2{
+      width:175px !important;
+      overflow:hidden;
+      text-overflow:ellipsis;  
+    }
 }
 @media screen and (width:375px) {
   .snd_div{
@@ -67,6 +87,15 @@ body{
   .bottomone .el-dialog__body{padding:5px 10px 0 10px !important;}
   .bottomTip{height:300px !important;}
   .bottomTip ul{height:180px !important;}
+  .bigStuff .el-dialog{
+    height:420px !important;
+  }
+  .bigStuffdiv h2{margin:10px 0;}
+  .llist .el-button h2{
+    width:175px;
+    overflow:hidden;
+    text-overflow:ellipsis;  
+  }
 }
 .bigone .el-dialog{
   margin:30vh auto !important;
