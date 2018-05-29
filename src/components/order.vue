@@ -27,7 +27,8 @@
                                 </el-button>
                                 <div style="display:inline-block;float:right;text-align:right;" class="listDiv">
                                     <div class="delete" v-if="serious">
-                                        <i class="el-icon-remove-outline" style="color:#2395ff" @click="cut"></i><span>{{num}}</span>
+                                        <i class="el-icon-remove-outline" style="color:#2395ff" @click="cut(item.category_id,item.virtual_food_id)"></i>
+                                        <span></span>
                                     </div>
                                     <el-button type="text" @click="openDialog(item.category_id, item.virtual_food_id)">
                                         <button :id="item.virtual_food_id">选规格</button>
@@ -87,10 +88,34 @@
             <div class="shoppingDescription">
                 <p>{{shop.activities[1].description}}</p>
             </div>
+            <div v-if="showCar" class="showCar">
+                <div class="alreadyChoose">
+                    <h2>已选商品</h2>
+                    <p @click="clear">清空</p>
+                </div>
+                <ul>
+                    <li v-for="item in cart.menu" class="goods">
+                        <div style="float:left;line-height:16px;text-align:left;">
+                            <p>{{item.name}}</p>
+                            <small style="font-size:11px;">{{item.name}} /</small>
+                        </div>
+                        <div style="margin:0 15px;color:#f60;">
+                            <p>￥{{item.prize}}</p>
+                        </div>
+                        <div>
+                            <el-input-number v-model="item.count" :min="0" :step="1" size="mini"></el-input-number>
+                        </div>
+                    </li>
+                </ul>
+                <div class="foodBox">
+                    <h2>餐盒</h2>
+                    <h2>{{cart.count}}</h2>
+                </div>
+            </div>
             <div class="workOutArea">
-                <div class="car">
+                <div class="car" @click="openBox">
                     <el-badge :value="cart.count">
-                        <el-button size="small"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgNTggNTgiPjxkZWZzPjxmaWx0ZXIgaWQ9ImEiIHdpZHRoPSIyMDAlIiBoZWlnaHQ9IjIwMCUiIHg9Ii01MCUiIHk9Ii01MCUiIGZpbHRlclVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCI+PGZlT2Zmc2V0IGluPSJTb3VyY2VBbHBoYSIgcmVzdWx0PSJzaGFkb3dPZmZzZXRPdXRlcjEiLz48ZmVHYXVzc2lhbkJsdXIgaW49InNoYWRvd09mZnNldE91dGVyMSIgcmVzdWx0PSJzaGFkb3dCbHVyT3V0ZXIxIiBzdGREZXZpYXRpb249IjEuNSIvPjxmZUNvbG9yTWF0cml4IGluPSJzaGFkb3dCbHVyT3V0ZXIxIiByZXN1bHQ9InNoYWRvd01hdHJpeE91dGVyMSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjA4IDAiLz48ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49InNoYWRvd01hdHJpeE91dGVyMSIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT48L2ZpbHRlcj48cGF0aCBpZD0iYiIgZD0iTTcuNjE0IDQuMDUxYy0xLjA2Ni4wODYtMS40NTItLjM5OC0xLjc1Mi0xLjU4NEM1LjU2MiAxLjI4LjMzIDUuODguMzMgNS44OGwzLjcxIDE5LjQ3NmMwIC4xNDgtMS41NiA3LjUxNS0xLjU2IDcuNTE1LS40ODkgMi4xOS4yOTIgNC4yNyAzLjU2IDQuMzIgMCAwIDM2LjkxNy4wMTcgMzYuOTIuMDQ3IDEuOTc5LS4wMTIgMi45ODEtLjk5NSAzLjAxMy0zLjAzOS4wMy0yLjA0My0xLjA0NS0yLjk3OC0yLjk4Ny0yLjk5M0w4LjgzIDMxLjE5MnMuODYtMy44NjUgMS4wNzctMy44NjVjMCAwLTUuNzg4LjEyMiAzMi4wNjUtMS45NTYuNjA2LS4wMzMgMi4wMTgtLjc2NCAyLjI5OC0xLjg0OCAxLjExMy00LjMxNyA0LjAwOC0xMy4yNiA0LjQ1OC0xNS42NC45MzItNC45MjUgMi4wNjEtOC41NTgtNC4yOC03LjQwNSAwIDAtMzUuNzY4IDMuNDg3LTM2LjgzMyAzLjU3M3oiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBmaWx0ZXI9InVybCgjYSkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUuMDM4IDcuODA4KSI+PG1hc2sgaWQ9ImMiIGZpbGw9IiNmZmYiPjx1c2UgeGxpbms6aHJlZj0iI2IiLz48L21hc2s+PHVzZSBmaWxsPSIjNUY1RjYzIiB4bGluazpocmVmPSIjYiIvPjxwYXRoIGZpbGw9IiNFQkVFRjMiIGQ9Ik01My45NjIgNy43NzRsLTUuNzAxIDE5LjMwNS00MC43OCAxLjU3NHoiIG1hc2s9InVybCgjYykiIG9wYWNpdHk9Ii4wNSIvPjwvZz48cGF0aCBzdHJva2U9IiM1RjVGNjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI2IiBkPSJNOS4zNzQgMTguNzIyUzcuODY4IDExLjI4MyA3LjMyMyA4LjcxQzYuNzc4IDYuMTM2IDUuODYgNS4zMyAzLjk3OCA0LjUyIDIuMDk2IDMuNzEzLjM2NyAyLjI4Ni4zNjcgMi4yODYiLz48Y2lyY2xlIGN4PSI0NiIgY3k9IjUxIiB
+                        <el-button size="small" :class="{active:isActive}"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgNTggNTgiPjxkZWZzPjxmaWx0ZXIgaWQ9ImEiIHdpZHRoPSIyMDAlIiBoZWlnaHQ9IjIwMCUiIHg9Ii01MCUiIHk9Ii01MCUiIGZpbHRlclVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCI+PGZlT2Zmc2V0IGluPSJTb3VyY2VBbHBoYSIgcmVzdWx0PSJzaGFkb3dPZmZzZXRPdXRlcjEiLz48ZmVHYXVzc2lhbkJsdXIgaW49InNoYWRvd09mZnNldE91dGVyMSIgcmVzdWx0PSJzaGFkb3dCbHVyT3V0ZXIxIiBzdGREZXZpYXRpb249IjEuNSIvPjxmZUNvbG9yTWF0cml4IGluPSJzaGFkb3dCbHVyT3V0ZXIxIiByZXN1bHQ9InNoYWRvd01hdHJpeE91dGVyMSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjA4IDAiLz48ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49InNoYWRvd01hdHJpeE91dGVyMSIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT48L2ZpbHRlcj48cGF0aCBpZD0iYiIgZD0iTTcuNjE0IDQuMDUxYy0xLjA2Ni4wODYtMS40NTItLjM5OC0xLjc1Mi0xLjU4NEM1LjU2MiAxLjI4LjMzIDUuODguMzMgNS44OGwzLjcxIDE5LjQ3NmMwIC4xNDgtMS41NiA3LjUxNS0xLjU2IDcuNTE1LS40ODkgMi4xOS4yOTIgNC4yNyAzLjU2IDQuMzIgMCAwIDM2LjkxNy4wMTcgMzYuOTIuMDQ3IDEuOTc5LS4wMTIgMi45ODEtLjk5NSAzLjAxMy0zLjAzOS4wMy0yLjA0My0xLjA0NS0yLjk3OC0yLjk4Ny0yLjk5M0w4LjgzIDMxLjE5MnMuODYtMy44NjUgMS4wNzctMy44NjVjMCAwLTUuNzg4LjEyMiAzMi4wNjUtMS45NTYuNjA2LS4wMzMgMi4wMTgtLjc2NCAyLjI5OC0xLjg0OCAxLjExMy00LjMxNyA0LjAwOC0xMy4yNiA0LjQ1OC0xNS42NC45MzItNC45MjUgMi4wNjEtOC41NTgtNC4yOC03LjQwNSAwIDAtMzUuNzY4IDMuNDg3LTM2LjgzMyAzLjU3M3oiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBmaWx0ZXI9InVybCgjYSkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUuMDM4IDcuODA4KSI+PG1hc2sgaWQ9ImMiIGZpbGw9IiNmZmYiPjx1c2UgeGxpbms6aHJlZj0iI2IiLz48L21hc2s+PHVzZSBmaWxsPSIjNUY1RjYzIiB4bGluazpocmVmPSIjYiIvPjxwYXRoIGZpbGw9IiNFQkVFRjMiIGQ9Ik01My45NjIgNy43NzRsLTUuNzAxIDE5LjMwNS00MC43OCAxLjU3NHoiIG1hc2s9InVybCgjYykiIG9wYWNpdHk9Ii4wNSIvPjwvZz48cGF0aCBzdHJva2U9IiM1RjVGNjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI2IiBkPSJNOS4zNzQgMTguNzIyUzcuODY4IDExLjI4MyA3LjMyMyA4LjcxQzYuNzc4IDYuMTM2IDUuODYgNS4zMyAzLjk3OCA0LjUyIDIuMDk2IDMuNzEzLjM2NyAyLjI4Ni4zNjcgMi4yODYiLz48Y2lyY2xlIGN4PSI0NiIgY3k9IjUxIiB
                         yPSI0IiBmaWxsPSIjNUY1RjYzIi8+PGNpcmNsZSBjeD0iMTIiIGN5PSI1MSIgcj0iNCIgZmlsbD0iIzVGNUY2MyIvPjwvZz48L3N2Zz4="></el-button>
                     </el-badge>
                 </div>
@@ -118,16 +143,16 @@ export default{
             currentFoodObj: {},
             currentImgObj:{},
             activeName:"",
-            num:"",
             serious:false,
             msg:"",
-            menu:[],
             specPrice:"",
             isActive:false,
+            showCar:false,
+            num1:1,
             cart: {
                 count: "",
                 price: 0,
-                menu: {}//下一步需要判断并添加数据到menu对象里，并在页面中渲染
+                menu: {}
             }
         }
     },
@@ -142,7 +167,7 @@ export default{
         axios.get('http://localhost:8080/static/shop.json')
         .then(response=> {
             this.shop = response.data;
-            this.msg='￥'+this.shop.float_minimum_order_amount+'起送'
+            this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
         })
         .catch(function(error){
             console.log(error);
@@ -216,6 +241,9 @@ export default{
             // this.leo = "false";无法更改因为显示函数在插件里已定死    v-if失败
             this.buttonVisible=false;//***
             this.cart.count++;
+            if(this.cart.count>0){
+                this.isActive=true;
+            }
             this.serious=true;
             if(0<this.cart.price<this.shop.float_minimum_order_amount){
                 var least=this.shop.float_minimum_order_amount-this.cart.price;
@@ -224,16 +252,64 @@ export default{
             if(this.cart.price>=this.shop.float_minimum_order_amount){
                 this.msg="<div style=background:#4cd964;height:100%;>去结算</div>"
             }
-            console.log(category_id,food_id);
-            // this.cart.menu[category_id]={
-            //     id:food_id,
-            //     prize:  ,
-            //     count:0
+            // this.cart.menu[food_id]={
+            //         category_id:category_id,
+            //         prize:this.currentFoodObj.specfoods[0].price,
+            //         count:0
+            // }
+            
+            var shopcart =this.cart.menu;
+            var flag = false; //菜单是否已存在，默认是不存在
+            for(var item in shopcart){
+                if(item == food_id && shopcart[item].category_id == category_id){
+                    flag = true;
+                    // debugger
+                    shopcart[food_id]={
+                        name:this.currentFoodObj.name,
+                        category_id:category_id,
+                        count: shopcart[food_id].count+1,
+                        prize: this.currentFoodObj.specfoods[0].price * (shopcart[food_id].count+1)
+                    }
+                }
+            }
+
+            // 如果该菜品还未点过,则默认设置此次添加为第一份菜
+            if(!flag){     //！表示取反
+                 shopcart[food_id]={
+                    name:this.currentFoodObj.name,
+                    category_id: category_id,
+                    prize: this.currentFoodObj.specfoods[0].price,
+                    count: 1
+                }
+            }
+            console.log(shopcart);
+            // this.cart.menu.food_id.count++;
+            // for(var item in this.cart.menu){
+            //     console.log(item);
+            //     if( item == food_id){
+            //         food_id.prize="15",
+            //         food_id.count=1
+            //     }else{
+            //         this.cart.menu[food_id]={
+            //             count:1,
+            //             prize:100
+            //         }
+            //     }
+            // }
+            // this.cart.menu[food_id]={
+            //     category_id:category_id,
+            //     prize:100,
+            //     count:1
+            // }
+            // console.log(category_id,food_id);
+            // for(var item in this.cart.menu){
+            //     console.log(item);
+            //     if(item == this.cart.menu.category_id){  
+            //     }
             // }
             // this.cart.menu
             // this.cart.count ++;
             // this.cart.menu
-            
             // for(var i=0; i<this.cart.menu.length; i++){
             //     if(menuId == id){
             //         this.cart.menu[id] = {
@@ -244,12 +320,53 @@ export default{
             // }
 
         },
-        cut(){
-            this.serious=false;
+        cut(category_id,food_id){
+            var category = null;
+            for(var i=0; i<this.order.length; i++){
+                if(this.order[i].id == category_id){
+                    category = this.order[i];
+                    for(var f=0, len=category.foods.length; f<len; f++){
+                        // 缓存当前菜品对象
+                        var food = null;
+                        if(category.foods[f].virtual_food_id == food_id){
+                            food = category.foods[f];
+                            this.currentFoodObj = food;
+                        }
+                    }
+                }
+            }
+            this.cart.price-=this.currentFoodObj.specfoods[0].price;
             this.cart.count--;
+            for(var item in this.cart.menu){
+                if(item == food_id && this.cart.menu[item].category_id == category_id){
+                    this.cart.menu[item].count--;
+                    this.cart.menu[item].prize-=this.currentFoodObj.specfoods[0].price;
+                }
+                console.log(this.cart.menu[item]);
+            }
+            
             if(this.cart.count<=0){
                 this.cart.count="";
+                this.serious=false;
+                this.isActive=false;
+                this.showCar=false;
+                this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
             }
+        },
+        openBox(){
+            if(this.cart.count>0){
+                this.showCar=true;
+            }
+        },
+        clear(){
+            this.showCar=false;
+            this.serious=false;
+            this.cart.count="";
+            this.cart.price=0;
+            this.cart.menu={};
+            this.isActive=false;
+            console.log(this.cart.menu);
+            this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
         }
     }
 }
@@ -282,9 +399,6 @@ export default{
     list-style:none;
     padding:15px 7%;
     font-size:14px;
-}
-.left_tb .active{
-    background:#fff;
 }
 .right_thing{
     padding:10px;
@@ -526,7 +640,6 @@ button{
     width:100%;
     position:fixed;
     bottom:0;
-    height:80px;
 }
 .shoppingDescription{
     width:100%;
@@ -538,7 +651,6 @@ button{
 .workOutArea{
     width:100%;
     background:rgba(61,61,63,.9);
-    height:75px;
     text-align:right;
 }
 .workOutprice h2{
@@ -551,7 +663,7 @@ button{
     width:50%;
     margin:0 auto;
     display:inline-block;
-    height:75px;
+    height:57px;
 }
 .workOutprice p{
     line-height:15px;
@@ -564,6 +676,7 @@ button{
     float:right;
     height:75px;
     color:#fff;
+    height:57px;
     line-height:55px;
     font-weight:bold;
     font-size:18px;
@@ -577,6 +690,15 @@ button{
     height:60px;
     border-radius:50%;
     background:rgba(61,61,63,.9);
+}
+.showCar{
+    width:100%;
+    background:#fff;
+    max-height:240px;
+    overflow:scroll;
+}
+.showCar ul{
+    padding-bottom:30px;
 }
 .car span{
     display:block;
@@ -599,11 +721,61 @@ button{
     top:7px;
     background:#363636;
 }
+.active{background:#3190e8 !important;}
 .car .el-badge__content.is-fixed{
     right:16px;
     top:10px;
 }
 .delete{
     display:inline-block;
+}
+.alreadyChoose{
+    background:#eceff1;
+    padding:0 3%;
+    margin:0;
+    text-align:left;
+}
+.alreadyChoose h2{
+    margin:0;
+    padding:8px 0;
+    display:inline-block;
+}
+.alreadyChoose p{
+    display:inline-block;
+    padding:8px 0;
+    float:right;
+}
+.goods{
+    list-style:none;
+    text-align:right;
+    padding:10px;
+}
+.goods div{
+    display:inline-block;
+    width:auto;
+    text-align:center;
+}
+.goods .el-input-number{
+    width:90px;
+}
+.goods .el-input-number__decrease{
+    border-radius:50%;
+}
+.goods .el-input-number__increase{
+    border-radius:50%;
+}
+.goods .el-input__inner{
+    border:none;
+    font-size:16px;
+}
+.foodBox{
+    padding:0 10px;
+    text-align:left;
+}
+.foodBox h2{
+    display:inline-block;
+}
+.foodBox :last-child{
+    margin-left:50%;
 }
 </style>
