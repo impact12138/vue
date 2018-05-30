@@ -19,17 +19,15 @@
         </li>
     </ul>
     <btn></btn>
-    <judge></judge>
+    
 </div>
 </template>
 <script>
 import axios from 'axios';
-import judge from './judge';
 import btn from './btn';
 export default{
     name:'talk',
     components:{
-        judge,
         btn
     },
     data(){

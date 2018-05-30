@@ -10,9 +10,6 @@
                         <span v-for="sth in bar.name" class="title_p">{{sth}}</span>
                         <span v-for="sth in bar.description" class="title_t">{{sth}}</span>
                     </div>
-                    <!--div v-for="pic in menuPic[index]">
-                        <img :src="pic">
-                    </div-->
                     
                     <div v-for="(item,index) in bar.foods" class="ulist">
                         <el-button type="text" @click="openBigone(item.category_id, item.virtual_food_id)">
@@ -27,8 +24,13 @@
                                 </el-button>
                                 <div style="display:inline-block;float:right;text-align:right;" class="listDiv">
                                     <div class="delete">
-                                        <i class="el-icon-remove-outline" style="color:#2395ff" v-if="find" @click="cut(item.category_id,item.virtual_food_id)"></i>
-                                        <span></span>
+                                        <span 
+                                        v-if="cart.menu[item.virtual_food_id] && cart.menu[item.virtual_food_id].count > 0"
+                                        @click="cut(item.category_id,item.virtual_food_id)"
+                                        class="deleteSpan">
+                                        -
+                                        </span>
+                                        <span v-if="cart.menu[item.virtual_food_id] && cart.menu[item.virtual_food_id].count > 0">{{cart.menu[item.virtual_food_id].count}}</span><!--先显示数字，后判断显示减号-->
                                     </div>
                                     <el-button type="text" @click="openDialog(item.category_id, item.virtual_food_id)">
                                         <button :id="item.virtual_food_id">选规格</button>
@@ -59,10 +61,10 @@
                     <h2>{{currentFoodObj.name}}</h2>
                     <div class="tipBox">
                         <p>规格</p>
-                        <el-tabs v-model="activeName" @tab-click="handleClick()" type="border-card">
+                        <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
                             <ul>
                                 <li v-for="jew in currentFoodObj.specfoods">
-                                    <el-tab-pane v-for="tip in jew.specs" :label="tip.value">
+                                    <el-tab-pane v-for="(tip,index) in jew.specs" :label="tip.value" :stock="jew.stock" :name="index">
                                         <ul v-for="sub in currentFoodObj.attrs" class="tinyUl">
                                             <p>{{sub.name}}</p>
                                             <li v-for="(taste,index) in sub.values" :name="index">{{taste}}</li>
@@ -71,8 +73,8 @@
                                             <div class="littleD1">
                                                 <h2>￥{{jew.price}}</h2>
                                             </div>
-                                            <div class="littleD2" @click="addMoney(currentFoodObj.category_id, currentFoodObj.virtual_food_id)">
-                                                <h2>选好了</h2>
+                                            <div class="littleD2" :class="{sellout: isSellout}" @click="addMoney(currentFoodObj.category_id, currentFoodObj.virtual_food_id)">
+                                                <h2 v-html="xhl"></h2>
                                             </div>
                                         </div>
                                     </el-tab-pane>
@@ -141,12 +143,13 @@ export default{
             imgVisible:false,
             currentFoodObj: {},
             currentImgObj:{},
-            activeName:"",
+            activeName:"1",
             msg:"",
-            find:false,
             specPrice:"",
             isActive:false,
             showCar:false,
+            isSellout: false,
+            xhl:"",
             cart: {
                 count: "",
                 price: 0,
@@ -166,6 +169,7 @@ export default{
         .then(response=> {
             this.shop = response.data;
             this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
+            this.xhl="选好了";
         })
         .catch(function(error){
             console.log(error);
@@ -230,31 +234,19 @@ export default{
             //     }
             // }
         },
-        handleClick() {
-            // var category = null;
-            // for(var i=0; i<this.order.length; i++){
-            //     if(this.order[i].id == category_id){
-            //         category = this.order[i];
-            //         for(var f=0, len=category.foods.length; f<len; f++){
-            //             // 缓存当前菜品对象
-            //             var food = null;
-            //             if(category.foods[f].virtual_food_id == food_id){
-            //                 food = category.foods[f];
-            //                 this.currentFoodObj = food;
-            //             }
-            //         }
-            //     }
-            // }
-            // for(var q=0;q<this.currentFoodObj.specfoods.length;q++){
-            //     if(this.currentFoodObj.specfoods[q].recent_popularity>0){
-            //         addMoney();
-            //     }
-            // }
+        handleClick(tab, event) {
+            if(tab.$attrs.stock > 0){
+                this.isSellout = false;
+                this.xhl="选好了";
+            }else{
+                this.isSellout = true;
+                this.xhl="已售完";
+            }
         },
         addMoney:function(category_id, food_id){
             //  debugger
             
-            // if(this.currentFoodObj.specfoods.recent_popularity>0){
+            if(this.isSellout == false){
                 this.cart.price=Number(this.cart.price)+Number(this.currentFoodObj.specfoods[0].price);
                 // var leo=document.getElementById("leo");操作DOM失败X2
                 // this.leo = "false";无法更改因为显示函数在插件里已定死    v-if失败
@@ -290,6 +282,7 @@ export default{
                         }
                     }
                 }
+                
             
             // 如果该菜品还未点过,则默认设置此次添加为第一份菜
             if(!flag){     //！表示取反
@@ -301,6 +294,7 @@ export default{
                 }
             }
             console.log(shopcart);
+            
             // this.cart.menu.food_id.count++;
             // for(var item in this.cart.menu){
             //     console.log(item);
@@ -336,7 +330,7 @@ export default{
             //         }
             //     }
                 // }
-            // }
+            }
             
         },
         cut(category_id,food_id){
@@ -380,6 +374,7 @@ export default{
                 }else{
                     this.showCar=true;
                 }
+                
             }
         },
         divide(category_id,food_id){
@@ -715,6 +710,9 @@ button{
     float:right;
     margin:0 5%;
 }
+.sellout h2{
+    background:#ccc !important;
+}
 .littleD2 h2{
     color:#fff;
     padding:6px;
@@ -816,6 +814,17 @@ button{
 }
 .delete{
     display:inline-block;
+    vertical-align:middle;
+}
+.deleteSpan{
+    font-size:20px;
+    width:15px;
+    height:15px;
+    display:inline-block;
+    border:1px solid #3190e8;
+    border-radius:50%;
+    line-height:15px;
+    text-align:center;
 }
 .alreadyChoose{
     background:#eceff1;
@@ -873,4 +882,5 @@ button{
 .foodBox :last-child{
     margin-left:50%;
 }
+
 </style>
