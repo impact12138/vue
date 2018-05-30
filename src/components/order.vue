@@ -26,8 +26,8 @@
                                 <span>￥<span style="font-weight:bold;font-size:18px;">{{item.specfoods[0].price}}</span> 起</span>
                                 </el-button>
                                 <div style="display:inline-block;float:right;text-align:right;" class="listDiv">
-                                    <div class="delete" v-if="serious">
-                                        <i class="el-icon-remove-outline" style="color:#2395ff" @click="cut(item.category_id,item.virtual_food_id)"></i>
+                                    <div class="delete">
+                                        <i class="el-icon-remove-outline" style="color:#2395ff" v-if="find" @click="cut(item.category_id,item.virtual_food_id)"></i>
                                         <span></span>
                                     </div>
                                     <el-button type="text" @click="openDialog(item.category_id, item.virtual_food_id)">
@@ -53,14 +53,13 @@
                 </div>
             </el-dialog>
         </div>
-        <totalPrice :shopping="shop"></totalPrice>
         <div class="stuff">
             <el-dialog :visible.sync="buttonVisible">
                 <div class="bodyDiv">
                     <h2>{{currentFoodObj.name}}</h2>
                     <div class="tipBox">
                         <p>规格</p>
-                        <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
+                        <el-tabs v-model="activeName" @tab-click="handleClick()" type="border-card">
                             <ul>
                                 <li v-for="jew in currentFoodObj.specfoods">
                                     <el-tab-pane v-for="tip in jew.specs" :label="tip.value">
@@ -86,7 +85,7 @@
         </div>  
         <div class="shoppingCart">
             <div class="shoppingDescription">
-                <p>{{shop.activities[1].description}}</p>
+                <p v-if=shop>{{shop.activities[1].description}}</p>
             </div>
             <div v-if="showCar" class="showCar">
                 <div class="alreadyChoose">
@@ -121,7 +120,7 @@
                 </div>
                 <div class="workOutprice">
                     <h2>￥{{cart.price}}</h2>
-                    <p>配送费￥{{shop.float_delivery_fee}}</p>
+                    <p v-if=shop>配送费￥{{shop.float_delivery_fee}}</p>
                 </div>
                 <div class="priceToSend" v-html="msg">
                 </div>
@@ -143,12 +142,11 @@ export default{
             currentFoodObj: {},
             currentImgObj:{},
             activeName:"",
-            serious:false,
             msg:"",
+            find:false,
             specPrice:"",
             isActive:false,
             showCar:false,
-            num1:1,
             cart: {
                 count: "",
                 price: 0,
@@ -232,50 +230,70 @@ export default{
             //     }
             // }
         },
-        handleClick(tab, event) {
-            console.log(tab, event);
+        handleClick() {
+            // var category = null;
+            // for(var i=0; i<this.order.length; i++){
+            //     if(this.order[i].id == category_id){
+            //         category = this.order[i];
+            //         for(var f=0, len=category.foods.length; f<len; f++){
+            //             // 缓存当前菜品对象
+            //             var food = null;
+            //             if(category.foods[f].virtual_food_id == food_id){
+            //                 food = category.foods[f];
+            //                 this.currentFoodObj = food;
+            //             }
+            //         }
+            //     }
+            // }
+            // for(var q=0;q<this.currentFoodObj.specfoods.length;q++){
+            //     if(this.currentFoodObj.specfoods[q].recent_popularity>0){
+            //         addMoney();
+            //     }
+            // }
         },
         addMoney:function(category_id, food_id){
-            this.cart.price=Number(this.cart.price)+Number(this.currentFoodObj.specfoods[0].price);
-            // var leo=document.getElementById("leo");操作DOM失败X2
-            // this.leo = "false";无法更改因为显示函数在插件里已定死    v-if失败
-            this.buttonVisible=false;//***
-            this.cart.count++;
-            if(this.cart.count>0){
-                this.isActive=true;
-            }
-            this.serious=true;
-            if(0<this.cart.price<this.shop.float_minimum_order_amount){
-                var least=this.shop.float_minimum_order_amount-this.cart.price;
-                this.msg="还差￥"+least+"起送"
-            }
-            if(this.cart.price>=this.shop.float_minimum_order_amount){
-                this.msg="<div style=background:#4cd964;height:100%;>去结算</div>"
-            }
-            // this.cart.menu[food_id]={
-            //         category_id:category_id,
-            //         prize:this.currentFoodObj.specfoods[0].price,
-            //         count:0
-            // }
+            //  debugger
             
-            var shopcart =this.cart.menu;
-            var flag = false; //菜单是否已存在，默认是不存在
-            for(var item in shopcart){
-                if(item == food_id && shopcart[item].category_id == category_id){
-                    flag = true;
-                    // debugger
-                    shopcart[food_id]={
-                        name:this.currentFoodObj.name,
-                        category_id:category_id,
-                        count: shopcart[food_id].count+1,
-                        prize: this.currentFoodObj.specfoods[0].price * (shopcart[food_id].count+1)
+            // if(this.currentFoodObj.specfoods.recent_popularity>0){
+                this.cart.price=Number(this.cart.price)+Number(this.currentFoodObj.specfoods[0].price);
+                // var leo=document.getElementById("leo");操作DOM失败X2
+                // this.leo = "false";无法更改因为显示函数在插件里已定死    v-if失败
+                this.buttonVisible=false;//***
+                this.cart.count++;
+                if(this.cart.count>0){
+                    this.isActive=true;
+                }
+                if(0<this.cart.price<this.shop.float_minimum_order_amount){
+                    var least=this.shop.float_minimum_order_amount-this.cart.price;
+                    this.msg="还差￥"+least+"起送"
+                }
+                if(this.cart.price>=this.shop.float_minimum_order_amount){
+                    this.msg="<div style=background:#4cd964;height:100%;>去结算</div>"
+                }
+                // this.cart.menu[food_id]={
+                //         category_id:category_id,
+                //         prize:this.currentFoodObj.specfoods[0].price,
+                //         count:0
+                // }
+                
+                var shopcart =this.cart.menu;
+                var flag = false; //菜单是否已存在，默认是不存在
+                for(var item in shopcart){
+                    if(item == food_id && shopcart[item].category_id == category_id){
+                        flag = true;
+                        // debugger
+                        shopcart[food_id]={
+                            name:this.currentFoodObj.name,
+                            category_id:category_id,
+                            count: shopcart[food_id].count+1,
+                            prize: this.currentFoodObj.specfoods[0].price * (shopcart[food_id].count+1)
+                        }
                     }
                 }
-            }
-
+            
             // 如果该菜品还未点过,则默认设置此次添加为第一份菜
             if(!flag){     //！表示取反
-                 shopcart[food_id]={
+                shopcart[food_id]={
                     name:this.currentFoodObj.name,
                     category_id: category_id,
                     prize: this.currentFoodObj.specfoods[0].price,
@@ -317,8 +335,9 @@ export default{
             //             prize: 
             //         }
             //     }
+                // }
             // }
-
+            
         },
         cut(category_id,food_id){
             var category = null;
@@ -347,7 +366,6 @@ export default{
             
             if(this.cart.count<=0){
                 this.cart.count="";
-                this.serious=false;
                 this.isActive=false;
                 this.showCar=false;
                 this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
@@ -393,7 +411,6 @@ export default{
             }
             if(this.cart.count<=0){
                 this.cart.count="";
-                this.serious=false;
                 this.isActive=false;
                 this.showCar=false;
                 this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
@@ -432,7 +449,6 @@ export default{
         },
         clear(){
             this.showCar=false;
-            this.serious=false;
             this.cart.count="";
             this.cart.price=0;
             this.cart.menu={};

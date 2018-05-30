@@ -2,27 +2,27 @@
   <div class="shop_area">
       <div class="fth_div">
         <h2>配送信息</h2>
-        <p><span>{{shop.delivery_mode.text}}</span>&nbsp; 约{{shop.order_lead_time}}分钟送达，距离{{shop.distance}}km</p>
-        <p>{{shop.piecewise_agent_fee.description}}</p>
+        <p v-if=shop><span v-if=shop>{{shop.delivery_mode.text}}</span>&nbsp; 约{{shop.order_lead_time}}分钟送达，距离{{shop.distance}}km</p>
+        <p v-if=shop>{{shop.piecewise_agent_fee.description}}</p>
       </div>
       <div class="fif_div">
         <h2>活动与服务</h2>
-        <ul>
+        <ul v-if=shop>
           <li v-for="(item,index) in shop.activities"><span v-bind:style="{background:sth[index]}">{{item.icon_name}}</span> &nbsp;{{item.tips}}</li>
         </ul>
       </div>
       <div class="six_div">
         <h2>商家实景</h2>
-        <img v-bind:src="shop.cover_img" class="hellopic3" />
-        <p>{{shop.albums[0].name}}({{shop.albums[0].count}}张)</p>
+        <img v-if=shop v-bind:src="shop.cover_img" class="hellopic3" />
+        <p v-if=shop>{{shop.albums[0].name}}({{shop.albums[0].count}}张)</p>
       </div>
       <div class="sve_div">
         <h2>商家信息</h2>
         <p>暂无简介</p>
-        <p class="sve_p">品类<span>{{shop.flavors[0].name}}、{{shop.flavors[1].name}}</span></p>
-        <p class="sve_p">商家电话<span>{{shop.phone}}></span></p>
-        <p class="sve_p">地址<span>{{shop.address}}</span></p>
-        <p class="sve_p">营业时间<span>{{shop.opening_hours[0]}}</span></p>
+        <p class="sve_p" v-if=shop>品类<span>{{shop.flavors[0].name}}、{{shop.flavors[1].name}}</span></p>
+        <p class="sve_p" v-if=shop>商家电话<span>{{shop.phone}}></span></p>
+        <p class="sve_p" v-if=shop>地址<span>{{shop.address}}</span></p>
+        <p class="sve_p" v-if=shop>营业时间<span>{{shop.opening_hours[0]}}</span></p>
       </div>
       <div class="ate_div">
         <h2>营业资质<span>></span></h2>
