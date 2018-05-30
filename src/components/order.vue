@@ -94,7 +94,7 @@
                     <p @click="clear">清空</p>
                 </div>
                 <ul>
-                    <li v-for="item in cart.menu" class="goods">
+                    <li v-for="(item, key) in cart.menu" class="goods">
                         <div style="float:left;line-height:16px;text-align:left;">
                             <p>{{item.name}}</p>
                             <small style="font-size:11px;">{{item.name}} /</small>
@@ -102,8 +102,8 @@
                         <div style="margin:0 15px;color:#f60;">
                             <p>￥{{item.prize}}</p>
                         </div>
-                        <div>
-                            <el-input-number v-model="item.count" :min="0" :step="1" size="mini"></el-input-number>
+                        <div style="width:30%" class="goodsLast">
+                            <p @click="divide(item.category_id,key)">-</p><span>{{item.count}}</span><p @click="add(item.category_id,key)">+</p>
                         </div>
                     </li>
                 </ul>
@@ -355,7 +355,79 @@ export default{
         },
         openBox(){
             if(this.cart.count>0){
-                this.showCar=true;
+                // this.showCar = !this.showCar;
+                // debugger
+                if(this.showCar){
+                    this.showCar=false;
+                }else{
+                    this.showCar=true;
+                }
+            }
+        },
+        divide(category_id,food_id){
+            // console.log(category_id);
+            var category = null;
+            for(var i=0; i<this.order.length; i++){
+                if(this.order[i].id == category_id){
+                    category = this.order[i];
+                    for(var f=0, len=category.foods.length; f<len; f++){
+                        // 缓存当前菜品对象
+                        var food = null;
+                        if(category.foods[f].virtual_food_id == food_id){
+                            food = category.foods[f];
+                            this.currentFoodObj = food;
+                        }
+                    }
+                }
+            }
+            this.cart.price-=this.currentFoodObj.specfoods[0].price;
+            this.cart.count--;
+            for(var item in this.cart.menu){
+                if(item == food_id && this.cart.menu[item].category_id == category_id){
+                    this.cart.menu[item].count--;
+                    this.cart.menu[item].prize-=this.currentFoodObj.specfoods[0].price;
+                    if(this.cart.menu[item].count<=0){
+                        delete this.cart.menu[item];
+                    }
+                }
+            }
+            if(this.cart.count<=0){
+                this.cart.count="";
+                this.serious=false;
+                this.isActive=false;
+                this.showCar=false;
+                this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
+            }
+        },
+        add(category_id,food_id){
+            var category = null;
+            for(var i=0; i<this.order.length; i++){
+                if(this.order[i].id == category_id){
+                    category = this.order[i];
+                    for(var f=0, len=category.foods.length; f<len; f++){
+                        // 缓存当前菜品对象
+                        var food = null;
+                        if(category.foods[f].virtual_food_id == food_id){
+                            food = category.foods[f];
+                            this.currentFoodObj = food;
+                        }
+                    }
+                }
+            }
+            this.cart.price+=this.currentFoodObj.specfoods[0].price;
+            this.cart.count++;
+            for(var item in this.cart.menu){
+                if(item == food_id && this.cart.menu[item].category_id == category_id){
+                    this.cart.menu[item].count++;
+                    this.cart.menu[item].prize+=this.currentFoodObj.specfoods[0].price;
+                }
+            }
+            if(0<this.cart.price<this.shop.float_minimum_order_amount){
+                var least=this.shop.float_minimum_order_amount-this.cart.price;
+                this.msg="还差￥"+least+"起送"
+            }
+            if(this.cart.price>=this.shop.float_minimum_order_amount){
+                this.msg="<div style=background:#4cd964;height:100%;>去结算</div>"
             }
         },
         clear(){
@@ -755,18 +827,25 @@ button{
     width:auto;
     text-align:center;
 }
-.goods .el-input-number{
-    width:90px;
-}
-.goods .el-input-number__decrease{
-    border-radius:50%;
-}
-.goods .el-input-number__increase{
-    border-radius:50%;
-}
-.goods .el-input__inner{
-    border:none;
+
+.goodsLast span{
+    width:10%;
     font-size:16px;
+    border:none;
+    text-align:center;
+}
+.goodsLast p{
+    width:20px;
+    height:20px;
+    display:inline-block;
+    line-height:18px;
+    font-size:20px;
+    text-align:center;
+    background:#fff;
+    border:1px solid #2395ff;
+    border-radius:50%;
+    color:#666;
+    margin:0 10px;
 }
 .foodBox{
     padding:0 10px;
