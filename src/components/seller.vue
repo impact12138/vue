@@ -1,28 +1,28 @@
 <template>
-  <div class="shop_area">
+  <div class="shop_area" v-if=shop>
       <div class="fth_div">
         <h2>配送信息</h2>
-        <p v-if=shop><span v-if=shop>{{shop.delivery_mode.text}}</span>&nbsp; 约{{shop.order_lead_time}}分钟送达，距离{{shop.distance}}km</p>
-        <p v-if=shop>{{shop.piecewise_agent_fee.description}}</p>
+        <p><span>{{shop.delivery_mode.text}}</span>&nbsp; 约{{order_lead_time}}送达，距离{{distance}}</p>
+        <p>{{shop.piecewise_agent_fee.description}}</p>
       </div>
       <div class="fif_div">
         <h2>活动与服务</h2>
-        <ul v-if=shop>
+        <ul>
           <li v-for="(item,index) in shop.activities"><span v-bind:style="{background:sth[index]}">{{item.icon_name}}</span> &nbsp;{{item.tips}}</li>
         </ul>
       </div>
       <div class="six_div">
         <h2>商家实景</h2>
-        <img v-if=shop v-bind:src="shop.cover_img" class="hellopic3" />
-        <p v-if=shop>{{shop.albums[0].name}}({{shop.albums[0].count}}张)</p>
+        <img v-bind:src="shop.cover_img" class="hellopic3" />
+        <p v-for='item in shop.albums'>{{item.name}}({{item.count}}张)</p>
       </div>
       <div class="sve_div">
         <h2>商家信息</h2>
         <p>暂无简介</p>
-        <p class="sve_p" v-if=shop>品类<span>{{shop.flavors[0].name}}、{{shop.flavors[1].name}}</span></p>
-        <p class="sve_p" v-if=shop>商家电话<span>{{shop.phone}}></span></p>
-        <p class="sve_p" v-if=shop>地址<span>{{shop.address}}</span></p>
-        <p class="sve_p" v-if=shop>营业时间<span>{{shop.opening_hours[0]}}</span></p>
+        <p class="sve_p">品类<span v-for="item in shop.flavors">{{item.name}}&nbsp;</span></p>
+        <p class="sve_p">商家电话<span>{{shop.phone}}></span></p>
+        <p class="sve_p">地址<span>{{shop.address}}</span></p>
+        <p class="sve_p">营业时间<span v-for="stt in shop.opening_hours">{{stt}}</span></p>
       </div>
       <div class="ate_div">
         <h2>营业资质<span>></span></h2>
@@ -36,7 +36,9 @@ export default {
   data () {
     return {
       shop: null,
-      sth:[]
+      sth:[],
+      distance:"",
+      order_lead_time:""
     }
     
   },
@@ -44,6 +46,16 @@ export default {
     axios.get('http://localhost:8080/static/shop.json')
     .then(response => {
         this.shop = response.data;
+        if(this.shop.distance>=100){
+        this.distance=this.shop.distance / 1000 + "km";
+        }else{
+          this.distance=this.shop.distance + "m";
+        }
+        if(this.shop.order_lead_time>=60){
+          this.order_lead_time=(this.shop.order_lead_time / 60).toFixed(2) + "小时";
+        }else{
+          this.order_lead_time=this.shop.order_lead_time +"分钟";
+        }
         for(var i=0;i<this.shop.activities.length;i++){
           this.sth.push("#" + this.shop.activities[i].icon_color);
         }

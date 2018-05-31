@@ -1,7 +1,7 @@
 <template>
     <div>
         <ul class="left_tb">
-            <li v-for="(item,index) in order" :class="['lione']" @click="tabMenu(index)"><a :href="'#'+ item.name" style="text-decoration:none;color:#666">{{item.name}}</a></li>
+            <li v-for="(item,index) in order" :key="item.name" :class="['lili',{lione: currentName===item.name}]" @click="currentName=item.name"><a :href="'#'+ item.name" style="text-decoration:none;color:#666">{{item.name}}</a></li>
         </ul><!--此处字符串拼接-->
         <div>
             <ul class="right_thing">
@@ -64,7 +64,7 @@
                         <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
                             <ul>
                                 <li v-for="jew in currentFoodObj.specfoods">
-                                    <el-tab-pane v-for="(tip,index) in jew.specs" :label="tip.value" :stock="jew.stock" :name="index">
+                                    <el-tab-pane v-for="(tip,index) in jew.specs" :label="tip.value" :stock="jew.stock">
                                         <ul v-for="sub in currentFoodObj.attrs" class="tinyUl">
                                             <p>{{sub.name}}</p>
                                             <li v-for="(taste,index) in sub.values" :name="index">{{taste}}</li>
@@ -85,9 +85,9 @@
                 </div>
             </el-dialog>
         </div>  
-        <div class="shoppingCart">
+        <div class="shoppingCart" v-if=shop>
             <div class="shoppingDescription">
-                <p v-if=shop>{{shop.activities[1].description}}</p>
+                <p>{{shop.activities[1].description}}</p>
             </div>
             <div v-if="showCar" class="showCar">
                 <div class="alreadyChoose">
@@ -122,7 +122,7 @@
                 </div>
                 <div class="workOutprice">
                     <h2>￥{{cart.price}}</h2>
-                    <p v-if=shop>配送费￥{{shop.float_delivery_fee}}</p>
+                    <p>配送费￥{{shop.float_delivery_fee}}</p>
                 </div>
                 <div class="priceToSend" v-html="msg">
                 </div>
@@ -132,7 +132,6 @@
 </template>
 <script>
 import axios from 'axios';
-import Vue from 'Vue';
 export default{
     name:"order",
     data(){
@@ -145,6 +144,7 @@ export default{
             currentImgObj:{},
             activeName:"1",
             msg:"",
+            currentName:"",
             specPrice:"",
             isActive:false,
             showCar:false,
@@ -161,6 +161,7 @@ export default{
         axios.get('http://localhost:8080/static/menu.json')
         .then(response=> {
             this.order = response.data;//定义数据
+            this.currentName="热销";
         })
         .catch(function(error){
             console.log(error);
@@ -197,9 +198,19 @@ export default{
                 }
             }
         },
-        tabMenu(index){
+        tabMenu(classIndex,name){
             // this.isActive=true;
-            console.log(index);
+            console.log(classIndex,name);
+            
+            // var click= null;
+            // for(var i=0;i<this.order.length;i++){
+            //     if(this.order[i].name = name){
+            //         click=this.order[i].name;
+            //         console.log(click);
+            //     }
+                
+            // }
+            
         },
         openDialog:function(category_id, food_id){
             this.buttonVisible=true;
@@ -294,42 +305,6 @@ export default{
                 }
             }
             console.log(shopcart);
-            
-            // this.cart.menu.food_id.count++;
-            // for(var item in this.cart.menu){
-            //     console.log(item);
-            //     if( item == food_id){
-            //         food_id.prize="15",
-            //         food_id.count=1
-            //     }else{
-            //         this.cart.menu[food_id]={
-            //             count:1,
-            //             prize:100
-            //         }
-            //     }
-            // }
-            // this.cart.menu[food_id]={
-            //     category_id:category_id,
-            //     prize:100,
-            //     count:1
-            // }
-            // console.log(category_id,food_id);
-            // for(var item in this.cart.menu){
-            //     console.log(item);
-            //     if(item == this.cart.menu.category_id){  
-            //     }
-            // }
-            // this.cart.menu
-            // this.cart.count ++;
-            // this.cart.menu
-            // for(var i=0; i<this.cart.menu.length; i++){
-            //     if(menuId == id){
-            //         this.cart.menu[id] = {
-            //             count: count+=,
-            //             prize: 
-            //         }
-            //     }
-                // }
             }
             
         },
@@ -354,10 +329,19 @@ export default{
                 if(item == food_id && this.cart.menu[item].category_id == category_id){
                     this.cart.menu[item].count--;
                     this.cart.menu[item].prize-=this.currentFoodObj.specfoods[0].price;
+                    if(this.cart.menu[item].count<=0){
+                        delete this.cart.menu[item];
+                    }
                 }
                 console.log(this.cart.menu[item]);
             }
-            
+            if(0<this.cart.price<this.shop.float_minimum_order_amount){
+                var least=this.shop.float_minimum_order_amount-this.cart.price;
+                this.msg="还差￥"+least+"起送"
+            }
+            if(this.cart.price>=this.shop.float_minimum_order_amount){
+                this.msg="<div style=background:#4cd964;height:100%;>去结算</div>"
+            }
             if(this.cart.count<=0){
                 this.cart.count="";
                 this.isActive=false;
@@ -404,12 +388,20 @@ export default{
                     }
                 }
             }
+            if(0<this.cart.price<this.shop.float_minimum_order_amount){
+                var least=this.shop.float_minimum_order_amount-this.cart.price;
+                this.msg="还差￥"+least+"起送"
+            }
+            if(this.cart.price>=this.shop.float_minimum_order_amount){
+                this.msg="<div style=background:#4cd964;height:100%;>去结算</div>"
+            }
             if(this.cart.count<=0){
                 this.cart.count="";
                 this.isActive=false;
                 this.showCar=false;
                 this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
             }
+            
         },
         add(category_id,food_id){
             var category = null;
@@ -453,21 +445,6 @@ export default{
         }
     }
 }
-// var left = document.getElementsByClassName("left_tb").getElementsByTagName("li");
-// for(var i=0;i<left.length;i++){
-//     left[i].onclick = function(){
-//         left[i].className = "isActive";
-//     }
-// }
-//点击“选好了”关闭弹窗事件，方法一:
-//操作虚拟DOM失败
-// Vue.nextTick(function(){
-//     var little = document.getElementsByClassName("littleD2");
-//     little.onclick = function(){
-//         var leo = document.getElementsByClassName("stuff").getElementsByClassName("el-dialog__wrapper");
-//         leo.display="none";
-//     }
-// })
 </script>
 <style type="text/css">
 .left_tb{
@@ -477,11 +454,17 @@ export default{
     height:700px;
     float:left;
 }
-.lione{
+.lili{
     display:block;
     list-style:none;
     padding:15px 7%;
     font-size:14px;
+}
+.lili:hover{
+    background:#fff;
+}
+.lili.lione{
+    background:#fff;
 }
 .right_thing{
     padding:10px;

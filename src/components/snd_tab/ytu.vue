@@ -115,7 +115,7 @@ export default{
     float:left; 
 }
 .tips{
-    width:25%;
+    width:23%;
     overflow:hidden;
     text-overflow: ellipsis;
     white-space:nowrap;

@@ -73,6 +73,7 @@ body{
       overflow:hidden;
       text-overflow:ellipsis;  
     }
+    .lili{font-size:13px !important;}
 }
 @media screen and (width:375px) {
   .snd_div{
