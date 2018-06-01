@@ -67,7 +67,7 @@ export default {
 }
 </script>
 <style>
-.trd_id .el-tab-pane{
+.shop_area{
   height:680px;
   overflow:scroll;
 }

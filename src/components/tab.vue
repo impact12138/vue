@@ -34,6 +34,9 @@ export default{
   margin-top:20px;
   font-size:16px;
   }
+.trd_div .el-tabs__content{
+    overflow:scroll;
+}
 #trd_id .el-tabs__header{
     margin-bottom:0;
 }

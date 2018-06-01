@@ -18,6 +18,10 @@ export default {
   margin:0;
   padding:0;
 }
+.snd_li .el-rate{
+  float:left;
+  margin:3px 0;
+}
 body{
   margin:0;
   padding:0;

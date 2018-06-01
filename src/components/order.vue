@@ -64,7 +64,7 @@
                         <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
                             <ul>
                                 <li v-for="jew in currentFoodObj.specfoods">
-                                    <el-tab-pane v-for="(tip,index) in jew.specs" :label="tip.value" :stock="jew.stock">
+                                    <el-tab-pane v-for="(tip,index) in jew.specs" :key="tip.value" :label="tip.value" :stock="jew.stock">
                                         <ul v-for="sub in currentFoodObj.attrs" class="tinyUl">
                                             <p>{{sub.name}}</p>
                                             <li v-for="(taste,index) in sub.values" :name="index">{{taste}}</li>
@@ -197,20 +197,6 @@ export default{
                     }
                 }
             }
-        },
-        tabMenu(classIndex,name){
-            // this.isActive=true;
-            console.log(classIndex,name);
-            
-            // var click= null;
-            // for(var i=0;i<this.order.length;i++){
-            //     if(this.order[i].name = name){
-            //         click=this.order[i].name;
-            //         console.log(click);
-            //     }
-                
-            // }
-            
         },
         openDialog:function(category_id, food_id){
             this.buttonVisible=true;
