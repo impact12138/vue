@@ -4,7 +4,7 @@
         <li class="fst_li">
             <p>{{scores.overall_score.toFixed(1)}}</p>
             <p>综合评价</p>
-            <p>高于周边商家{{scores.compare_rating | toInt}}%</p>
+            <p>高于周边商家{{(scores.compare_rating * 100).toFixed(1)}}%</p>
         </li>
         <li class="snd_li">
             <div>
@@ -13,8 +13,7 @@
                     v-model="scores.service_score.toFixed(1)"
                     disabled
                     text-color="#ff9900"
-                    vertical="middle"
-                    score-template="{value}">
+                    vertical="middle">
                 </el-rate> 
                 <span style="color:#f60;display:inline-block;float:left;">{{scores.service_score.toFixed(1)}}</span>
             </div>
@@ -24,8 +23,7 @@
                     v-model="scores.service_score.toFixed(1)"
                     disabled
                     text-color="#ff9900"
-                    vertical="middle"
-                    score-template="{value}">
+                    vertical="middle">
                 </el-rate> 
                 <span style="color:#f60;display:inline-block;float:left;">{{scores.food_score.toFixed(1)}}</span>
             </div>
@@ -63,11 +61,6 @@ export default{
         .catch(function(error){
         console.log(error);
         })
-    },
-    filters:{
-        toInt:function(value){
-            return (value*100).toFixed(1);
-        }
     }
 }
 </script>

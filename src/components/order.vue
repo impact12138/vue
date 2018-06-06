@@ -1,16 +1,15 @@
 <template>
     <div>
         <ul class="left_tb">
-            <li v-for="(item,index) in order" :key="item.name" :class="['lili',{lione: currentName===item.name}]" @click="currentName=item.name"><a :href="'#'+ item.name" style="text-decoration:none;color:#666">{{item.name}}</a></li>
+            <li v-for="(item,index) in order" :key="item.name" :class="['lili',{lione: currentName===item.name}]" @click="currentName=item.name"><a :href="'#'+ item.id" style="text-decoration:none;color:#666">{{item.name}}</a></li>
         </ul><!--此处字符串拼接-->
         <div>
             <ul class="right_thing">
                 <li v-for="(bar,index) in order">
-                    <div :id="bar.name"><!--设置锚点-->
-                        <span v-for="sth in bar.name" class="title_p">{{sth}}</span>
-                        <span v-for="sth in bar.description" class="title_t">{{sth}}</span>
+                    <div :id="bar.id"><!--设置锚点-->
+                        <span class="title_p">{{bar.name}}</span>
+                        <span class="title_t">{{bar.description}}</span>
                     </div>
-                    
                     <div v-for="(item,index) in bar.foods" class="ulist">
                         <el-button type="text" @click="openBigone(item.category_id, item.virtual_food_id)">
                             <img :src="item.image_path">
@@ -149,6 +148,7 @@ export default{
             isActive:false,
             showCar:false,
             isSellout: false,
+            scrollTop:"",
             xhl:"",
             cart: {
                 count: "",
@@ -175,6 +175,9 @@ export default{
         .catch(function(error){
             console.log(error);
         })
+        // debugger
+        var right = document.getElementsByClassName('right_thing')[0];
+        right.addEventListener('scroll', this.handleScroll);
     },
     methods:{
         openBigone:function(category_id, food_id){
@@ -428,6 +431,29 @@ export default{
             this.isActive=false;
             console.log(this.cart.menu);
             this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
+        },
+        handleScroll(){
+            // debugger
+            this.scrollTop = document.getElementsByClassName('right_thing')[0].scrollTop;
+            console.log(this.scrollTop);
+            if(this.scrollTop < 100){
+                this.currentName = "热销";
+            }
+            if(this.scrollTop > 1353){
+                this.currentName = "优惠";
+            }
+            if(this.scrollTop > 2500){
+                this.currentName = "超值套餐为您优选！";
+            }
+            if(this.scrollTop > 3653){
+                this.currentName = "公告栏";
+            }
+            if(this.scrollTop > 4212){
+                this.currentName = "正新鸡排";
+            }
+            if(this.scrollTop > 4903){
+                this.currentName = "美味烤串";
+            };
         }
     }
 }
