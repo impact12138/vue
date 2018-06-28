@@ -3,7 +3,7 @@
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
             <el-tab-pane 
             :label="item.name+'('+item.count+')'" 
-            :name="index"
+            :name="'a'+index"
             :key="item.name"
             v-for="(item,index) in tags">
             <judge :data="msg"></judge>
@@ -22,7 +22,7 @@ export default{
     data(){
         return{
             tags: null,
-            activeName: '0',
+            activeName: 'a0',
             msg:null
         }
     },
@@ -38,19 +38,15 @@ export default{
     },
     methods: {
       handleClick(tab,event) {
-        // this.currentName=tab.name;
-        // console.log(this.currentName);
-        // this.currentName= name;
-        // debugger
         var tabName = tab.name;
         var url = "";
-        if(tabName=="0" || tabName=="3"){
+        if(tabName=="a0" || tabName=="a3"){
             url = "http://localhost:8080/static/rating.json";
-        }else if(tabName=="1"){
+        }else if(tabName=="a1"){
             url = 'http://localhost:8080/static/ratingsTwo.json';
-        }else if(tabName=="2"){
+        }else if(tabName=="a2"){
             url = 'http://localhost:8080/static/ratingsThree.json';
-        }else if(tabName=="4"){
+        }else if(tabName=="a4"){
             url = 'http://localhost:8080/static/ratingsfour.json';
         }
 
@@ -58,8 +54,6 @@ export default{
             .then( response=> {
                 this.msg = response.data;
             })
-        
-        console.log(this.msg[0].order_id);
       }
     }
 }

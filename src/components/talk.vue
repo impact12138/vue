@@ -10,7 +10,7 @@
             <div>
                 <span style="float:left;margin-right:4px;">服务态度</span>
                 <el-rate
-                    v-model="scores.service_score.toFixed(1)"
+                    v-model="scores.service_score"
                     disabled
                     text-color="#ff9900"
                     vertical="middle">
@@ -20,7 +20,7 @@
             <div>
                 <span style="float:left;margin-right:4px;">菜品评价</span> 
                 <el-rate
-                    v-model="scores.service_score.toFixed(1)"
+                    v-model="scores.service_score"
                     disabled
                     text-color="#ff9900"
                     vertical="middle">

@@ -1,12 +1,14 @@
 <template>
     <div>
         <ul class="left_tb">
-            <li v-for="(item,index) in order" :key="item.name" :class="['lili',{lione: currentName===item.name}]" @click="currentName=item.name"><a :href="'#'+ item.id" style="text-decoration:none;color:#666">{{item.name}}</a></li>
+            <li v-for="(item,index) in order" :key="item.name" :class="['lili',{lione: currentName==item.name}]" @click="leftChange(item.name)">
+                {{item.name}}
+            </li>
         </ul><!--此处字符串拼接-->
         <div>
             <ul class="right_thing">
-                <li v-for="(bar,index) in order">
-                    <div :id="bar.id"><!--设置锚点-->
+                <li v-for="(bar,index) in order" :id="bar.index">
+                    <div>
                         <span class="title_p">{{bar.name}}</span>
                         <span class="title_t">{{bar.description}}</span>
                     </div>
@@ -16,10 +18,10 @@
                         </el-button>
                             <div class="llist">
                                 <el-button type="text" @click="openBigone(item.category_id, item.virtual_food_id)">
-                                <h2>{{item.name}}</h2>
-                                <p class="spoke">{{item.description}}</p>
-                                <p class="sell">月售{{item.month_sales}}份 好评率{{item.satisfy_rate}}%</p>
-                                <span>￥<span style="font-weight:bold;font-size:18px;">{{item.specfoods[0].price}}</span> 起</span>
+                                    <h2 style="color:#000;">{{item.name}}</h2>
+                                    <p class="spoke">{{item.description}}</p>
+                                    <p class="sell">月售{{item.month_sales}}份 好评率{{item.satisfy_rate}}%</p>
+                                    <span>￥<span style="font-weight:bold;font-size:18px;">{{item.specfoods[0].price}}</span> 起</span>
                                 </el-button>
                                 <div style="display:inline-block;float:right;text-align:right;" class="listDiv">
                                     <div class="delete">
@@ -433,28 +435,77 @@ export default{
             this.msg='￥'+this.shop.float_minimum_order_amount+'起送';
         },
         handleScroll(){
-            // debugger
             this.scrollTop = document.getElementsByClassName('right_thing')[0].scrollTop;
-            console.log(this.scrollTop);
-            if(this.scrollTop < 100){
+            if(this.scrollTop >=0 && this.scrollTop <= 100){
                 this.currentName = "热销";
-            }
-            if(this.scrollTop > 1353){
+            }else if(this.scrollTop > 100 && this.scrollTop <= 1353){
                 this.currentName = "优惠";
-            }
-            if(this.scrollTop > 2500){
+            }else if(this.scrollTop > 1353 && this.scrollTop <= 2600){
                 this.currentName = "超值套餐为您优选！";
-            }
-            if(this.scrollTop > 3653){
+            }else if(this.scrollTop > 2600 && this.scrollTop <= 3653){
                 this.currentName = "公告栏";
-            }
-            if(this.scrollTop > 4212){
+            }else if(this.scrollTop > 3653 && this.scrollTop <= 4212){
                 this.currentName = "正新鸡排";
-            }
-            if(this.scrollTop > 4903){
+            }else if(this.scrollTop > 4212 && this.scrollTop <= 4903){
                 this.currentName = "美味烤串";
             };
+            console.log(this.currentName);
+        },
+        leftChange(name){
+            var list = document.getElementsByClassName('right_thing')[0];
+            // debugger
+            this.currentName = name;
+            this.scrollTop = list.scrollTop;
+            if(name == "热销"){
+                list.scrollTop = 0;
+            }
+            if(name == "优惠"){
+                list.scrollTop = 1340;
+            }
+            if(name == "超值套餐为您优选！"){
+                list.scrollTop = 2545;
+            }
+            if(name == "公告栏"){
+                list.scrollTop = 3620;
+            }
+            if(name == "正新鸡排"){
+                list.scrollTop = 4168;
+            }
+            if(name == "美味烤串"){
+                list.scrollTop = 4848;
+            }
+
+            console.log(this.currentName);
         }
+        // goAnchor(selector){
+        //     // debugger
+        //     var anchor = this.$el.querySelector(selector);
+        //     this.scrollTop = document.getElementsByClassName('right_thing')[0].scrollTop;
+        //     this.scrollTop = anchor.offsetTop;
+        // }
+        // leftA(name){
+        //     // debugger
+        //     console.log(name);
+        //     this.scrollTop = document.getElementsByClassName('right_thing')[0].scrollTop;
+        //     if(name == "热销"){
+        //         this.scrollTop = 0;
+        //     }
+        //     if(name == "优惠"){
+        //         this.scrollTop = 1353;
+        //     }
+        //     if(name == "超值套餐为您优选！"){
+        //         this.scrollTop = 2500;
+        //     }
+        //     if(name == "公告栏"){
+        //         this.scrollTop = 3653;
+        //     }
+        //     if(name == "正新鸡排"){
+        //         this.scrollTop = 4212;
+        //     }
+        //     if(name == "美味烤串"){
+        //         this.scrollTop = 4903;
+        //     }
+        // }
     }
 }
 </script>
@@ -469,13 +520,10 @@ export default{
 .lili{
     display:block;
     list-style:none;
-    padding:15px 7%;
     font-size:14px;
+    padding:15px 7%;
 }
-.lili:hover{
-    background:#fff;
-}
-.lili.lione{
+.lione{
     background:#fff;
 }
 .right_thing{
@@ -582,7 +630,7 @@ button{
     position:absolute;
 }
 .bigStuffdiv{
-    padding:10px;
+    padding:0 10px;
     text-align:left;
 }
 .bigStuffdiv h2{
@@ -610,7 +658,8 @@ button{
 .describe{
     font-size:12px;
     text-align:left;
-    margin:-55px 6px 0 6px;
+    position:absolute;
+    bottom:25%;
     color:#ddd;
 }
 .stuff .el-dialog__header{
@@ -738,6 +787,7 @@ button{
     margin:0;
     color:#fff;
     line-height:30px;
+    font-size:17px;
 }
 .workOutprice{
     text-align:left;

@@ -1,56 +1,54 @@
 <template>
-    <el-tabs v-model="activeName" @tab-click="handleClick" class="trd_div" id="trd_id">
-      <el-tab-pane label="点餐" name="first"><order></order></el-tab-pane>
-      <el-tab-pane label="评价" name="second"><talk></talk></el-tab-pane>
-      <el-tab-pane label="商家" name="third"><seller></seller></el-tab-pane>
-    </el-tabs>
+    <div class="tab" id="tab">
+        <div class="tabSingle">
+            <router-link to="/order">点餐</router-link>
+        </div>
+        <div class="tabSingle">
+            <router-link to="/talk">评价</router-link>
+        </div>
+        <div class="tabSingle">
+            <router-link to="/seller">商家</router-link>
+        </div>
+        <router-view></router-view>
+    </div>
 </template>
 <script>
-import seller from './seller';
-import talk from './talk';
-import order from './order';
 export default{
     name: 'tab',
-    components:{
-        seller,
-        talk,
-        order
-    },
     data(){
         return {
-            activeName: 'first'
+            
         }
     },
     methods:{
     handleClick(tab,event){
-      console.log(tab,event);
+    //   console.log(tab,event);
     }
   }
 }
 </script>
 <style type="text/css">
-.trd_div{
-  width:100%;
-  margin-top:20px;
-  font-size:16px;
-  }
-.trd_div .el-tabs__content{
-    overflow:scroll;
-}
-#trd_id .el-tabs__header{
-    margin-bottom:0;
-}
-.el-tabs__active-bar{
-    width:34% !important;
-}
-.el-tabs__nav{
+.tab{
     width:100%;
+    height:40px;
+    border-bottom:1.5px solid #f8f8f8;
 }
-.el-tabs__item:hover{
-    color:#000;
+.tabSingle{
+    width:32.5%;
+    display:inline-block;
+    line-height:40px;
 }
-.el-tabs__header .el-tabs__item{
-    width:33%;
-    padding:0;
+.tabSingle a{
+    text-decoration: none;
+    color:#666;
+    display:block;
+    width:100%;
+    font-size:15px;
+    height:100%;
+}
+.active1{
+    color:#333;
+    font-weight:bold;
+    border-bottom:2px solid #3199e8;
 }
 </style>
